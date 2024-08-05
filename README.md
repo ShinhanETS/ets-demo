@@ -1,2 +1,3 @@
 # ets-demo
-ets demo option
+
+ETS DEMO 입니다.

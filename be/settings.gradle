@@ -1,0 +1,4 @@
+rootProject.name = 'be'
+include 'applications'
+include 'applications:auth-application'
+include 'utils'
