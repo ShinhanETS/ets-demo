@@ -27,3 +27,16 @@ dongwon_kim@gimdong-won-ui-MacBookPro ets-demo %
 4. 테스트    
 프론트는 http://localhost 로 접속하시면 됩니다.   
 백엔드는 http://localhost/api ~로 접속하시변 됩니다.
+### Install QA
+#### Q1. 프론트 개발 시, 주의점
+- 개발 시, `fe 폴더`에서 `npm run dev` 하시면 일반 개발할 때랑 같습니다.
+- 개발할 때, ENV 등의 환경에 대한 변경 사항이 있으면 [@EastWon0103](https://github.com/EastWon0103)에게 말씀해주세요.
+#### Q2. 백엔드 개발 시, 주의점
+- 멀티 모듈 기반 MSA(?)로 작동합니다. (서버 분리)
+- API는 도메인 별로, context-path를 나누고 이를 기반으로 nginx에서 라우팅합니다.
+```yaml
+server:
+  servlet:
+    context-path: /api/auth 
+```
+- 모듈 추가의 어려움이 있으시면 [@EastWon0103](https://github.com/EastWon0103)에게 말씀해주세요.
