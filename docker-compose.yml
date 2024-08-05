@@ -1,5 +1,114 @@
 version: '3'
+networks:
+    kafka_network:
+
 services:
+    ets-kafka1:
+        container_name: ets-kafka1
+        restart: unless-stopped
+        image: bitnami/kafka:3.7.0
+        ports:
+            - "10000:9094"
+        environment:
+            - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+            # KRaft settings
+            - KAFKA_CFG_BROKER_ID=0
+            - KAFKA_CFG_NODE_ID=0
+            - KAFKA_KRAFT_CLUSTER_ID=HsDBs9l6UUmQq7Y5E6bNlw
+            - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@ets-kafka1:9093,1@ets-kafka2:9093,2@ets-kafka3:9093
+            - KAFKA_CFG_PROCESS_ROLES=controller,broker
+            # Listeners
+            - ALLOW_PLAINTEXT_LISTENER=yes
+            - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+            - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://ets-kafka1:9092,EXTERNAL://127.0.0.1:10000
+            - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+            - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+            - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+            # Clustering
+            - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+            - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
+            - KAFKA_CFG_MIN_INSYNC_REPLICAS=2
+            - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
+        networks:
+            - kafka_network
+
+    ets-kafka2:
+        container_name: ets-kafka2
+        restart: unless-stopped
+        image: bitnami/kafka:3.7.0
+        ports:
+            - "10001:9094"
+        environment:
+            - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+            # KRaft settings
+            - KAFKA_CFG_BROKER_ID=1
+            - KAFKA_CFG_NODE_ID=1
+            - KAFKA_KRAFT_CLUSTER_ID=HsDBs9l6UUmQq7Y5E6bNlw
+            - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@ets-kafka1:9093,1@ets-kafka2:9093,2@ets-kafka3:9093
+            - KAFKA_CFG_PROCESS_ROLES=controller,broker
+            # Listeners
+            - ALLOW_PLAINTEXT_LISTENER=yes
+            - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+            - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://ets-kafka2:9092,EXTERNAL://127.0.0.1:10001
+            - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+            - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+            - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+            # Clustering
+            - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+            - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
+            - KAFKA_CFG_MIN_INSYNC_REPLICAS=2
+            - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
+        networks:
+            - kafka_network
+
+    ets-kafka3:
+        container_name: ets-kafka3
+        restart: unless-stopped
+        image: bitnami/kafka:3.7.0
+        ports:
+            - "10002:9094"
+        environment:
+            - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+            # KRaft settings
+            - KAFKA_CFG_BROKER_ID=2
+            - KAFKA_CFG_NODE_ID=2
+            - KAFKA_KRAFT_CLUSTER_ID=HsDBs9l6UUmQq7Y5E6bNlw
+            - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@ets-kafka1:9093,1@ets-kafka2:9093,2@ets-kafka3:9093
+            - KAFKA_CFG_PROCESS_ROLES=controller,broker
+            # Listeners
+            - ALLOW_PLAINTEXT_LISTENER=yes
+            - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+            - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://ets-kafka3:9092,EXTERNAL://127.0.0.1:10002
+            - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+            - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+            - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+            # Clustering
+            - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+            - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
+            - KAFKA_CFG_MIN_INSYNC_REPLICAS=2
+            - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
+        networks:
+            - kafka_network
+
+    kafka-ui:
+        image: provectuslabs/kafka-ui
+        container_name: kafka-ui
+        ports:
+            - "8888:8080"
+        restart: always
+        environment:
+            - KAFKA_CLUSTERS_0_NAME=Local-Kraft-Cluster
+            - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=ets-kafka1:9092,ets-kafka2:9092,ets-kafka3:9092
+            - DYNAMIC_CONFIG_ENABLED=true
+            - KAFKA_CLUSTERS_0_AUDIT_TOPICAUDITENABLED=true
+            - KAFKA_CLUSTERS_0_AUDIT_CONSOLEAUDITENABLED=true
+        depends_on:
+            - ets-kafka1
+            - ets-kafka2
+            - ets-kafka3
+        networks:
+            - kafka_network
+
     nginx:
         image: nginx
         container_name: proxy_server
@@ -18,7 +127,20 @@ services:
         volumes:
             -   ./be:/be
         command: "gradle clean build --parallel -x test"
-
+    auth-db:
+        container_name: auth-db
+        image: mysql:8.0.33-oracle
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=auth-db
+            - TZ="Asia/Seoul"
+        ports:
+            - "3310:3306"
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        command:
+            - --character-set-server=utf8mb4
+            - --collation-server=utf8mb4_unicode_ci
     auth-server:
         container_name: auth-server
         image: openjdk:17
@@ -30,16 +152,57 @@ services:
         extra_hosts:
             - "host.docker.internal:host-gateway"
         environment:
-            - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/shinhan-db?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
+            - SPRING_DATASOURCE_URL=jdbc:mysql://auth-db:3306/auth-db?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
             - SPRING_DATASOURCE_USERNAME=root
             - SPRING_DATASOURCE_PASSWORD=root
         command: "java -jar auth-application-0.0.1-SNAPSHOT.jar"
         depends_on:
             nginx:
                 condition: service_started
+            auth-db:
+                condition: service_started
             spring-builder:
                 condition: service_completed_successfully
-
+            kafka-ui:
+                condition: service_started
+    account-db:
+        container_name: account-db
+        image: mysql:8.0.33-oracle
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=account-db
+            - TZ="Asia/Seoul"
+        ports:
+            - "3311:3306"
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        command:
+            - --character-set-server=utf8mb4
+            - --collation-server=utf8mb4_unicode_ci
+    account-server:
+        container_name: account-server
+        image: openjdk:17
+        working_dir: /app
+        volumes:
+            -   ./be/applications/account-application/build/libs:/app
+        ports:
+            - "7081:8081"
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        environment:
+            - SPRING_DATASOURCE_URL=jdbc:mysql://account-db:3306/account-db?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
+            - SPRING_DATASOURCE_USERNAME=root
+            - SPRING_DATASOURCE_PASSWORD=root
+        command: "java -jar account-application-0.0.1-SNAPSHOT.jar"
+        depends_on:
+            nginx:
+                condition: service_started
+            account-db:
+                condition: service_started
+            spring-builder:
+                condition: service_completed_successfully
+            kafka-ui:
+                condition: service_started
     client:
         container_name: client
         build:

@@ -1,0 +1,8 @@
+project(":utils:kafka-util") {
+    bootJar{enabled = false}
+    jar {enabled = true}
+
+    dependencies {
+        implementation 'com.fasterxml.jackson.core:jackson-databind'
+    }
+}

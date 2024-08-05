@@ -1,4 +1,4 @@
-project(":applications:auth-application") {
+project(":applications:account-application") {
     bootJar{enabled = true}
     jar {enabled = false}
 

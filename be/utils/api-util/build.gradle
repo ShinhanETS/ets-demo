@@ -1,0 +1,8 @@
+project(":utils:api-util") {
+    bootJar{enabled = false}
+    jar {enabled = true}
+
+    dependencies {
+
+    }
+}
