@@ -193,6 +193,7 @@ services:
             - SPRING_DATASOURCE_URL=jdbc:mysql://account-db:3306/account-db?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
             - SPRING_DATASOURCE_USERNAME=root
             - SPRING_DATASOURCE_PASSWORD=root
+            - SPRING_KAFKA_PRODUCER_BOOTSTRAP-SERVERS=ets-kafka1:9092,ets-kafka2:9092,ets-kafka3:9092
         command: "java -jar account-application-0.0.1-SNAPSHOT.jar"
         depends_on:
             nginx:
@@ -268,14 +269,55 @@ services:
         extra_hosts:
             - "host.docker.internal:host-gateway"
         environment:
-            - SPRING_DATASOURCE_URL=jdbc:mysql://membership-db:3306/ets-db?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
+            - SPRING_DATASOURCE_URL=jdbc:mysql://membership-db:3306/membership-db?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
             - SPRING_DATASOURCE_USERNAME=root
             - SPRING_DATASOURCE_PASSWORD=root
+            - SPRING_KAFKA_CONSUMER_BOOTSTRAP-SERVERS=ets-kafka1:9092,ets-kafka2:9092,ets-kafka3:9092
         command: "java -jar membership-application-0.0.1-SNAPSHOT.jar"
         depends_on:
             nginx:
                 condition: service_started
             membership-db:
+                condition: service_started
+            spring-builder:
+                condition: service_completed_successfully
+            kafka-ui:
+                condition: service_started
+    alert-db:
+        container_name: alert-db
+        image: mysql:8.0.33-oracle
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=alert-db
+            - TZ="Asia/Seoul"
+        ports:
+            - "3314:3306"
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        command:
+            - --character-set-server=utf8mb4
+            - --collation-server=utf8mb4_unicode_ci
+
+    alert-server:
+        container_name: alert-server
+        image: openjdk:17
+        working_dir: /app
+        volumes:
+            - ./be/applications/alert-application/build/libs:/app
+        ports:
+            - "7084:8084"
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        environment:
+            - SPRING_DATASOURCE_URL=jdbc:mysql://alert-db:3306/alert-db?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
+            - SPRING_DATASOURCE_USERNAME=root
+            - SPRING_DATASOURCE_PASSWORD=root
+            - SPRING_KAFKA_CONSUMER_BOOTSTRAP-SERVERS=ets-kafka1:9092,ets-kafka2:9092,ets-kafka3:9092
+        command: "java -jar alert-application-0.0.1-SNAPSHOT.jar"
+        depends_on:
+            nginx:
+                condition: service_started
+            alert-db:
                 condition: service_started
             spring-builder:
                 condition: service_completed_successfully

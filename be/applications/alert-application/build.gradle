@@ -1,4 +1,4 @@
-project(":applications:account-application") {
+project(":applications:alert-application") {
     bootJar{enabled = true}
     jar {enabled = false}
 

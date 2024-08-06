@@ -22,3 +22,6 @@ spring:
         use_sql_comments: true
         format_sql: true
     defer-datasource-initialization: true
+  kafka:
+    producer:
+      bootstrap-servers: localhost:10000,localhost:10001,localhost:10002
