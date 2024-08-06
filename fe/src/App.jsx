@@ -3,7 +3,7 @@ import { RecoilRoot } from 'recoil';
 import Main from './routes/Main';
 import RecoilEx from './routes/RecoilEx';
 import ApiEx from './routes/ApiEx';
-import Layout from './components/Layout'; // Layout 컴포넌트 임포트
+import Layout from './components/common/Layout'; // Layout 컴포넌트 임포트
 import Login from './routes/Login';
 import ProductDetail from './routes/ProductDetail';
 
