@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import MainBanner from '../assets/MainBanner.svg'
+import Pin from '../assets/Pin.svg'
 import MainButton from '../components/main/MainButton';
 
 export default function MainPage() {
-    const [selectedTap, setSelectedTap] = useState(0);
+    const [selectedTab, setSelectedTab] = useState(0);
     const [selectedButton, setSelectedButton] = useState(0);
     const handleButtonClick = (number) => {
       setSelectedButton(number)
     }
     const handleTapClick = (index) => {
-      setSelectedTap(index);
+      setSelectedTab(index);
   };
     return (
       <div className="flex flex-col h-screen bg-white relative select-none">
@@ -19,7 +20,7 @@ export default function MainPage() {
                   <div
                       key={index}
                       className={`mx-2.5 my-2 cursor-pointer ${
-                          selectedTap === index 
+                          selectedTab === index 
                               ? 'text-white text-white-1 border-b-[0.2rem]' 
                               : 'text-[#FFFFFF] opacity-60'
                       }`}
@@ -29,17 +30,46 @@ export default function MainPage() {
                   </div>
               ))}
           </div>
-          <div className="h-[16vh] mx-[4.5vw] bg-white-1 rounded-2xl p-4 absolute mt-[12vh] drop-shadow-md flex">
-            <div className="w-[60%] flex flex-col gap-1 justify-center">
-              <h2 className="text-md font-black font-bold">OOO님, 탄소배출권을 <br /> 거래해보세요!</h2>
-              <p className="text-xs">
-                탄소배출권을 거래함으로써 사용자가 얻을 수 있는 기대효과를 염두에 두고 사용해보세요!
-              </p>
+          {selectedTab !== 2 ? 
+            <div className="w-[91vw] h-[16vh] mx-[4.5vw] bg-white-1 rounded-2xl p-4 absolute mt-[12vh] drop-shadow-md flex">
+              <div className="w-[60%] flex flex-col gap-1 justify-center">
+                <h2 className="text-md font-black font-bold">OOO님, 탄소배출권을 <br /> 거래해보세요!</h2>
+                <p className="text-xs">
+                  탄소배출권을 거래함으로써 사용자가 얻을 수 있는 기대효과를 염두에 두고 사용해보세요!
+                </p>
+              </div>
+              <div className='w-[40vw] flex justify-end items-center' >
+                <img src={MainBanner} alt="" className="" />
+              </div>
             </div>
-            <div className='w-[40vw] flex justify-center items-center' >
-              <img src={MainBanner} alt="" className="" />
+          :
+            <div className="flex flex-col justify-center items-start p-8 gap-2 w-[91vw] h-[16vh] mx-[4.5vw] bg-white-1 rounded-2xl absolute mt-[12vh] drop-shadow-md">
+              <div className='font-medium text-sm'>
+                현재 OOO님의 거래현황
+              </div>
+              <div className='flex flex-col w-full'>
+                <div className='flex justify-between w-full font-extrabold text-md'>
+                  <div className='flex gap-2'>
+                    <img src={Pin} alt="" className="" />
+                    누적 거래금액
+                  </div>
+                  <div>
+                    123,456원
+                  </div>
+                </div>
+                <div className='flex justify-between w-full font-extrabold text-md'>
+                  <div className='flex gap-2'>
+                    <img src={Pin} alt="" className="" />
+                    누적 거래량
+                  </div>
+                  <div>
+                    123,456원
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          }
+
         </div>
   
         {/* 내용 영역 */}
