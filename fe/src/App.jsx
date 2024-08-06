@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
-import './App.css';
 import Main from './routes/Main';
 import RecoilEx from './routes/RecoilEx';
 import ApiEx from './routes/ApiEx';
