@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 import flowbite from 'flowbite-react/tailwind';
+
 export default {
   content: [
     "./index.html",
@@ -13,6 +14,9 @@ export default {
       md: '768px',
       lg: '976px',
       xl: '1440px',
+    },
+    colors: {
+      "blue-1": "#1141ED",
     },
     extend: {},
   },

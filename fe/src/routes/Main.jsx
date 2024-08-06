@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom"
 import { Button } from "flowbite-react"
-import BottomButton from "../components/BottomButton"
 
 export default function Main() {
 
@@ -25,7 +24,6 @@ export default function Main() {
   return (
     <div className="min-h-screen min-w-screen flex flex-col items-center gap-6 px-6">
       Main 페이지 입니다
-      <BottomButton text="안녕" />
       <div>
         <button onClick={handleLoginClick}>
           로그인 페이지로 가기
