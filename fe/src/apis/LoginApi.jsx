@@ -7,11 +7,6 @@ export async function Login(userId, password) {
           userId, 
           password
         },         
-        {
-          headers: {
-            'Authorization': 'Bearer someRandomToken' // 임의의 값으로 Authorization 헤더 추가
-          }
-        }
       ); 
       return response.data; 
   } catch (error) {
