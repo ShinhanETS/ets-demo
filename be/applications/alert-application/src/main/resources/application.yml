@@ -1,21 +1,14 @@
 server:
   servlet:
-    context-path: /api/membership
-  port: 8083
-logging:
-  level:
-    org.hibernate.SQL: debug # logger? ?????
-    org.hibernate.type.descriptor.sql: trace # ???? ? ??
+    context-path: /api/alerts
+  port: 8084
+
 spring:
   application:
-    name: membership-application
-  sql:
-    init:
-      mode: always
-      data-locations: classpath:db/insert_*.sql
+    name: alert-application
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3313/membership-db?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3314/alert-db?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
     username: root
     password: root
   jpa:
@@ -30,6 +23,6 @@ spring:
     defer-datasource-initialization: true
   kafka:
     consumer:
-      group-id: membership-group # Group Id
+      group-id: alert-group # Group Id
       auto-offset-reset: earliest
       bootstrap-servers: localhost:10000,localhost:10001,localhost:10002
