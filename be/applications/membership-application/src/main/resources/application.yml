@@ -1,15 +1,15 @@
 server:
   servlet:
-    context-path: /api/ets
-  port: 8082
+    context-path: /api/membership
+  port: 8083
 
 spring:
   application:
-    name: ets-application
+    name: membership-application
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3312/ets-db?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3313/membership-db?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
     username: root
     password: root
   jpa:
