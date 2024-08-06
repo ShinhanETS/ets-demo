@@ -4,8 +4,8 @@ const Layout = ({ children }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   return (
-    <div className='w-full h-full'>
-      <div className="w-full h-full">{children}</div>
+    <div className="min-h-screen min-w-screen">
+      <div className="">{children}</div>
       {isVisible && (
         <div>하단창 내용</div>
       )}
