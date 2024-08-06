@@ -1,0 +1,16 @@
+project(":applications:ets-application") {
+    bootJar{enabled = true}
+    jar {enabled = false}
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter'
+        implementation 'org.springframework.boot:spring-boot-starter-validation'
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        runtimeOnly 'com.mysql:mysql-connector-j'
+
+        implementation project(':utils:api-util')
+        implementation project(':utils:exception-util')
+        implementation project(':utils:jwt-util')
+    }
+}
