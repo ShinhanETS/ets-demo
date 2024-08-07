@@ -40,7 +40,12 @@ public class AccountController {
         return ApiUtil.success("성공", accountDto);
     }
 
-
+    // 보유 종목 조회
+    @GetMapping("/holdings")
+    public GlobalResponse<List<HoldingDto>> getHoldings(@AuthInfo AuthUser authUser){
+        List<HoldingDto> holdingDtoList = holdingService.getHoldingList(authUser.getId());
+        return ApiUtil.success("성공", holdingDtoList);
+    }
 
     //
 
