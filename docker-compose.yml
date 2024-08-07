@@ -323,6 +323,17 @@ services:
                 condition: service_completed_successfully
             kafka-ui:
                 condition: service_started
+    sise-server:
+        container_name: sise-server
+        build:
+            context: ./be/applications/sise-application
+            dockerfile: Dockerfile
+        ports:
+            -   "7085:8085"
+        depends_on:
+            nginx:
+                condition: service_started
+
     client:
         container_name: client
         build:
