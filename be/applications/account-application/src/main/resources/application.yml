@@ -6,7 +6,10 @@ server:
 spring:
   application:
     name: auth-application
-
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:db/insert_*.sql
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3311/account-db?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
