@@ -17,3 +17,10 @@ export const detailTabState = atom({
     key: 'detailTab',
     default: 0,
 })
+
+// 차트 데이터
+export const chartState = atom({
+    key: 'chartData',
+    default: [],
+    
+})
