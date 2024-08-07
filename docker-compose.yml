@@ -29,8 +29,8 @@ services:
             - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
             - KAFKA_CFG_MIN_INSYNC_REPLICAS=2
             - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
-        networks:
-            - kafka_network
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
 
     ets-kafka2:
         container_name: ets-kafka2
@@ -58,8 +58,8 @@ services:
             - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
             - KAFKA_CFG_MIN_INSYNC_REPLICAS=2
             - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
-        networks:
-            - kafka_network
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
 
     ets-kafka3:
         container_name: ets-kafka3
@@ -87,8 +87,8 @@ services:
             - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
             - KAFKA_CFG_MIN_INSYNC_REPLICAS=2
             - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
-        networks:
-            - kafka_network
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
 
     kafka-ui:
         image: provectuslabs/kafka-ui
@@ -106,8 +106,6 @@ services:
             - ets-kafka1
             - ets-kafka2
             - ets-kafka3
-        networks:
-            - kafka_network
 
     nginx:
         image: nginx
@@ -193,7 +191,7 @@ services:
             - SPRING_DATASOURCE_URL=jdbc:mysql://account-db:3306/account-db?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
             - SPRING_DATASOURCE_USERNAME=root
             - SPRING_DATASOURCE_PASSWORD=root
-            - SPRING_KAFKA_PRODUCER_BOOTSTRAP-SERVERS=ets-kafka1:9092,ets-kafka2:9092,ets-kafka3:9092
+            - SPRING_KAFKA_PRODUCER_BOOTSTRAP-SERVERS=ets-kafka1:9092,ets-kafka2:9092,ets-kafka1:9092
         command: "java -jar account-application-0.0.1-SNAPSHOT.jar"
         depends_on:
             nginx:
@@ -323,6 +321,17 @@ services:
                 condition: service_completed_successfully
             kafka-ui:
                 condition: service_started
+    sise-server:
+        container_name: sise-server
+        build:
+            context: ./be/applications/sise-application
+            dockerfile: Dockerfile
+        ports:
+            -   "7085:8085"
+        depends_on:
+            nginx:
+                condition: service_started
+
     client:
         container_name: client
         build:
