@@ -1,0 +1,5 @@
+finance-datareader
+flask
+requests
+pandas
+beautifulsoup4
