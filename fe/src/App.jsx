@@ -12,16 +12,16 @@ export default function App() {
   return (
     <RecoilRoot>
       <Router>
-        <Layout>
-          <Routes>
+        <Routes>
+          <Route path='/login' element={<LoginPage />} />
+          <Route element={<Layout />}>
             <Route path='/' element={<LandingPage />} />
             <Route path='/main' element={<MainPage />} />
-            <Route path='/login' element={<LoginPage />} />
             <Route path='/detail/:productId' element={<ProductDetailPage />} />
             <Route path='/recoilex' element={<RecoilEx />} />
             <Route path='/api' element={<ApiEx />} />
-          </Routes>
-        </Layout>
+          </Route>
+        </Routes>
       </Router>
     </RecoilRoot>
   );
