@@ -45,7 +45,7 @@ export default function ArticleContainer() {
   ];
 
   return (
-    <div className="h-[calc(100vh_-_222px)] flex flex-col gap-8 bg-white px-[1.5rem] pt-[0.8rem] pb-[1.8rem] overflow-scroll">
+    <div className="h-[calc(100vh_-_222px)] flex flex-col gap-8 bg-white-1 px-[1.5rem] pt-[0.8rem] pb-[2.8rem] overflow-scroll">
       {articles.map((article, idx) => (
         <div key={idx} className="flex gap-4 items-center">
           <div className="flex flex-col gap-2 text-black">

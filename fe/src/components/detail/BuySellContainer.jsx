@@ -18,9 +18,13 @@ import {
 import { initialData } from "./data";
 import { useRecoilState } from "recoil";
 import { chartState } from "../../recoil/state";
+import ConfirmAlert from "./ConfirmAlert";
 
 export default function BuySellContainer({ isBuy, price }) {
   const [amount, setAmount] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
   const chartData = initialData;
   // const [chartData, setChartData] = useRecoilState(chartState);
 
@@ -30,20 +34,28 @@ export default function BuySellContainer({ isBuy, price }) {
 
   const onChange = (e) => {
     setAmount(e.target.value * 9120);
+    setIsError(false);
     // setAmount(e.target.value * price);
   };
 
   const onBuy = () => {
     // 매수 로직
     if (amount === 0) {
-      console.log("수량을 입력해주세요.");
+      // console.log("수량을 입력해주세요.");
+      setIsError(true);
+      setMessage("수량을 입력해주세요.");
+    } else {
+      setMessage("구매가 완료되었습니다.");
     }
   };
 
   const onSell = () => {
     // 매도 로직
     if (amount === 0) {
-      console.log("수량을 입력해주세요.");
+      setIsError(true);
+      setMessage("수량을 입력해주세요.");
+    } else {
+      setMessage("판매가 완료되었습니다.");
     }
   };
 
@@ -130,115 +142,131 @@ export default function BuySellContainer({ isBuy, price }) {
   }
 
   return (
-    <div className="h-[calc(100vh_-_222px)] flex flex-col pb-[1.4rem] gap-2 bg-white overflow-x-hidden overflow-y-scroll">
-      <div>
-        <ChartCanvas
-          height={height}
-          ratio={3}
-          width={width}
-          margin={margin}
-          data={data}
-          displayXAccessor={displayXAccessor}
-          seriesName="Data"
-          xScale={xScale}
-          xAccessor={xAccessor}
-          xExtents={xExtents}
-          zoomAnchor={lastVisibleItemBasedZoomAnchor}
-        >
-          <Chart
-            id={1}
-            height={chartHeight}
-            yExtents={candleChartExtents}
-            padding={10}
+    <>
+      <ConfirmAlert isOpen={isOpen} setIsOpen={setIsOpen} message={message} />
+      <div className="z-10 h-[calc(100vh_-_222px)] flex flex-col pb-[1.4rem] gap-2 bg-white-1 overflow-x-hidden overflow-y-scroll">
+        <div>
+          <ChartCanvas
+            height={height}
+            ratio={3}
+            width={width}
+            margin={margin}
+            data={data}
+            displayXAccessor={displayXAccessor}
+            seriesName="Data"
+            xScale={xScale}
+            xAccessor={xAccessor}
+            xExtents={xExtents}
+            zoomAnchor={lastVisibleItemBasedZoomAnchor}
           >
-            <HoverTooltip
-              tooltip={{ content: tooltipContent() }}
-              fontSize={14}
-              toolTipStrokeStyle="#bababa"
-              toolTipFillStyle="#fff"
-              background={{
-                fillStyle: "rgba(0, 0, 0, 0.02)",
-                strokeStyle: "ShortDash2",
-              }}
-              yAccessor={(d) => d.volume}
-            />
-            <XAxis
-              showGridLines
-              showTickLabel={false}
-              tickStrokeStyle="#BABABA"
-              strokeStyle="#BABABA"
-            />
-            <YAxis
-              showGridLines
-              tickFormat={pricesDisplayFormat}
-              tickStrokeStyle="#BABABA"
-              strokeStyle="#BABABA"
-              tickLabelFill="#BABABA"
-            />
-            <CandlestickSeries fill={openCloseColor} />
-            <MouseCoordinateX displayFormat={timeDisplayFormat} />
-            <MouseCoordinateY
-              rectWidth={margin.right}
-              displayFormat={pricesDisplayFormat}
-            />
-            <EdgeIndicator
-              itemType="last"
-              rectWidth={margin.right}
-              fill={openCloseColor}
-              lineStroke={openCloseColor}
-              displayFormat={pricesDisplayFormat}
-              yAccessor={yEdgeIndicator}
-              fullWidth={true}
-            />
-          </Chart>
-        </ChartCanvas>
-      </div>
-      <div className="h-[calc(100vh_-_407px)] flex flex-col gap-8 justify-between px-[1.5rem] bg-white text-black">
-        <div className="flex flex-col gap-3">
-          {/* <div className="w-full bg-[#EDEDED] rounded text-center">시장가</div> */}
+            <Chart
+              id={1}
+              height={chartHeight}
+              yExtents={candleChartExtents}
+              padding={10}
+            >
+              <HoverTooltip
+                tooltip={{ content: tooltipContent() }}
+                fontSize={14}
+                toolTipStrokeStyle="#bababa"
+                toolTipFillStyle="#fff"
+                background={{
+                  fillStyle: "rgba(0, 0, 0, 0.02)",
+                  strokeStyle: "ShortDash2",
+                }}
+                yAccessor={(d) => d.volume}
+              />
+              <XAxis
+                showGridLines
+                showTickLabel={true}
+                tickStrokeStyle="#BABABA"
+                strokeStyle="#BABABA"
+                tickLabelFill="#A9A9A9"
+                gridLinesStrokeWidth={0.2}
+                tickStrokeWidth={0.2}
+                strokeWidth={0.02}
+                // tickFormat={timeDisplayFormat}
+              />
+              <YAxis
+                showGridLines
+                tickFormat={pricesDisplayFormat}
+                tickStrokeStyle="#BABABA"
+                strokeStyle="#BABABA"
+                tickLabelFill="#A9A9A9"
+              />
+              <CandlestickSeries
+                fill={openCloseColor}
+                wickStroke={openCloseColor}
+              />
+              <MouseCoordinateX displayFormat={timeDisplayFormat} />
+              <MouseCoordinateY
+                rectWidth={margin.right}
+                displayFormat={pricesDisplayFormat}
+              />
+              <EdgeIndicator
+                itemType="last"
+                rectWidth={margin.right}
+                fill={openCloseColor}
+                lineStroke={openCloseColor}
+                displayFormat={pricesDisplayFormat}
+                yAccessor={yEdgeIndicator}
+                fullWidth={true}
+              />
+            </Chart>
+          </ChartCanvas>
+        </div>
+        <div className="h-[calc(100vh_-_407px)] flex flex-col gap-8 justify-between px-[1.5rem] bg-white-1 text-black">
+          <div className="flex flex-col gap-3">
+            {/* <div className="w-full bg-[#EDEDED] rounded text-center">시장가</div> */}
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-col text-[0.9rem]">
+                <span>가격</span>
+                <div className="flex justify-end gap-1 border border-[#D9D9D9] px-3 py-[10px] rounded">
+                  {/* <span>{amount}</span> */}
+                  <span>9,120</span>
+                  <span>원</span>
+                </div>
+              </div>
+              <div className="flex flex-col text-[0.9rem]">
+                <span>수량</span>
+                <div className="relative flex items-center">
+                  <input
+                    className="w-full bg-transparent border border-[#D9D9D9] px-[2.5rem] py-[10px] rounded text-end focus:outline-none"
+                    onChange={onChange}
+                  />
+                  <span className="absolute right-[1.1rem]">개</span>
+                </div>
+              </div>
+              {isError && (
+                <span className="text-[0.8rem] text-red-1 text-end">
+                  {message}
+                </span>
+              )}
+            </div>
+          </div>
           <div className="flex flex-col gap-2">
-            <div className="flex flex-col text-[0.9rem]">
-              <span>가격</span>
-              <div className="flex justify-end gap-1 border px-3 py-[10px] rounded">
-                {/* <span>{amount}</span> */}
-                <span>9,120</span>
-                <span>원</span>
+            <div className="flex justify-between text-[1rem]">
+              <span>총 금액</span>
+              <span>{amount.toLocaleString()}원</span>
+            </div>
+            {isBuy ? (
+              <div
+                className="flex w-full items-center justify-center min-h-[3rem] max-h-[3.3rem] bg-[#E81212] text-white-1 rounded-[0.5rem]"
+                onClick={onBuy}
+              >
+                매수
               </div>
-            </div>
-            <div className="flex flex-col text-[0.9rem]">
-              <span>수량</span>
-              <div className="relative flex items-center">
-                <input
-                  className="w-full bg-transparent border px-[2.5rem] py-[10px] rounded text-end focus:outline-none"
-                  onChange={onChange}
-                />
-                <span className="absolute right-[1.1rem]">개</span>
+            ) : (
+              <div
+                className="flex w-full items-center justify-center min-h-[3rem] max-h-[3.3rem] bg-[#1141ED] text-white-1 rounded-[0.5rem]"
+                onClick={onSell}
+              >
+                매도
               </div>
-            </div>
+            )}
           </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <div className="flex justify-between text-[1rem]">
-            <span>총 금액</span>
-            <span>{amount.toLocaleString()}원</span>
-          </div>
-          {isBuy ? (
-            <div
-              className="flex w-full items-center justify-center min-h-[3rem] max-h-[3.3rem] bg-[#E81212] text-white rounded-[0.5rem]"
-              onClick={onBuy}
-            >
-              매수
-            </div>
-          ) : (
-            <div
-              className="flex w-full items-center justify-center min-h-[3rem] max-h-[3.3rem] bg-[#1141ED] text-white rounded-[0.5rem]"
-              onClick={onSell}
-            >
-              매도
-            </div>
-          )}
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'Pretendard';
-  src: url('/fonts/Pretendard.ttf') format('truetype');
-  font-weight: 100 900;   /* 기본 굵기 설정. 100 ~ 900 까지 가능! */
+  font-family: "Pretendard";
+  src: url("/fonts/Pretendard.ttf") format("truetype");
+  font-weight: 100 900; /* 기본 굵기 설정. 100 ~ 900 까지 가능! */
   font-style: normal;
 }
 
@@ -23,7 +23,6 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 
 a {
   font-weight: 500;

@@ -1,6 +1,6 @@
 export default function InfoContainer({ name, subname, price, rate, updown }) {
   return (
-    <div className="px-[1.5rem] py-[0.5rem] bg-white text-black">
+    <div className="px-[1.5rem] py-[0.5rem] bg-white-1 text-black">
       <div>
         <span className="text-[1.2rem]">KAU23</span>
         {/* <span>(스텅 타타이 수력 발전 프로젝트)</span> */}

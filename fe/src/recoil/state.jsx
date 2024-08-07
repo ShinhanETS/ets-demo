@@ -22,5 +22,10 @@ export const detailTabState = atom({
 export const chartState = atom({
     key: 'chartData',
     default: [],
-    
+})
+
+// 멤버십
+export const bottomState = atom({
+    key: 'bottomState',
+    default: true,
 })

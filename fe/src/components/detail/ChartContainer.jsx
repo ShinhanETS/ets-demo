@@ -126,7 +126,7 @@ export default function ChartContainer({ nowPrice }) {
   }
 
   return chartData?.length > 0 ? (
-    <div className="bg-white">
+    <div className="bg-white-1">
       <ChartCanvas
         height={height}
         ratio={3}
@@ -170,7 +170,10 @@ export default function ChartContainer({ nowPrice }) {
             strokeStyle="#BABABA"
             tickLabelFill="#BABABA"
           />
-          <CandlestickSeries fill={openCloseColor} />
+          <CandlestickSeries
+            fill={openCloseColor}
+            wickStroke={openCloseColor}
+          />
           <MouseCoordinateX displayFormat={timeDisplayFormat} />
           <MouseCoordinateY
             rectWidth={margin.right}
