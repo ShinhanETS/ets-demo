@@ -13,4 +13,9 @@ public class AuthUser extends TokenAuth {
         super(id, username);
         this.token = token;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s, %s, %s", this.getId(), this.getUsername(), token);
+    }
 }

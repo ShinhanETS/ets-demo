@@ -16,7 +16,7 @@ public class JwtUtil {
 
     public static String generateToken(final TokenAuth tokenAuth) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime expiredTime = now.plusMinutes(1);
+        LocalDateTime expiredTime = now.plusMonths(1);
 
         return Jwts.builder()
             .setSubject(tokenAuth.getId().toString())

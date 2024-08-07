@@ -3,6 +3,7 @@ package com.pda.jwtutil.auth;
 import com.pda.exceptionutil.exceptions.CommonException;
 import com.pda.jwtutil.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -12,6 +13,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Aspect
 @Component
+@Slf4j
 public class AuthenticatedAspect {
     @Before("@annotation(com.pda.jwtutil.auth.Authenticated)")
     public void authenticated(JoinPoint joinPoint) {

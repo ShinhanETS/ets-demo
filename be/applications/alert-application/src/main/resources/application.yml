@@ -1,0 +1,28 @@
+server:
+  servlet:
+    context-path: /api/alerts
+  port: 8084
+
+spring:
+  application:
+    name: alert-application
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3314/alert-db?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        show-sql: true
+        highlight_sql: true
+        use_sql_comments: true
+        format_sql: true
+    defer-datasource-initialization: true
+  kafka:
+    consumer:
+      group-id: alert-group # Group Id
+      auto-offset-reset: earliest
+      bootstrap-servers: localhost:10000,localhost:10001,localhost:10002
