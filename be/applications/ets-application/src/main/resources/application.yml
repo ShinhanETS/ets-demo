@@ -6,7 +6,10 @@ server:
 spring:
   application:
     name: ets-application
-
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:db/insert_*.sql
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3312/ets-db?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
