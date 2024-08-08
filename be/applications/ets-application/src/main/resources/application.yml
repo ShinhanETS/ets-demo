@@ -2,6 +2,9 @@ server:
   servlet:
     context-path: /api/ets
   port: 8082
+  host:
+    sise-server : http://localhost:8085
+    account-server : http://localhost:8081
 
 spring:
   application:
@@ -17,7 +20,7 @@ spring:
     password: root
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     properties:
       hibernate:
         show-sql: true
