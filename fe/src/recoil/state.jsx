@@ -1,11 +1,5 @@
 import {atom} from 'recoil'
 
-// 예시용(삭제예정)
-export const textState = atom({
-    key: 'text',
-    default: 'defaultText',
-})
-
 // 메인 페이지 탭 (국내, 해외, My거래)
 export const mainTabState = atom({
     key: 'mainTab',
@@ -16,4 +10,10 @@ export const mainTabState = atom({
 export const detailTabState = atom({
     key: 'detailTab',
     default: 0,
+})
+
+// 멤버쉽 데이터
+export const membershipState = atom({
+    key: 'membership',
+    default: {}
 })

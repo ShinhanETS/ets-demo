@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "flowbite-react"
 
 export default function LandingPage() {
-
   const navigate = useNavigate()
 
   const handleLoginClick=()=>{
@@ -46,11 +45,6 @@ export default function LandingPage() {
       <div>
         <button onClick={handleSubClick}>
           Recoil 예시 페이지로 가기
-        </button>
-      </div>
-      <div>
-        <button onClick={handleApiExClick}>
-          Api 예시 페이지로 가기
         </button>
       </div>
       <div>
