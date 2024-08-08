@@ -149,6 +149,9 @@ export default function BuySellContainer({
     if (amount === 0) {
       setIsError(true);
       setMessage("수량을 입력해주세요.");
+    } else if (amount > sellQuantity.quantity) {
+      setIsError(true);
+      setMessage("매도 가능 수량을 초과했습니다.");
     } else {
       const data = {
         stock_code: params.productId,
@@ -191,7 +194,9 @@ export default function BuySellContainer({
                 <div className="flex justify-between">
                   <span>수량</span>
                   {!isBuy && (
-                    <span className="text-blue-1">매도 가능 수량: {sellQuantity.quantity}</span>
+                    <span className="text-blue-1">
+                      매도 가능 수량: {sellQuantity.quantity}
+                    </span>
                   )}
                 </div>
                 <div className="relative flex items-center">
