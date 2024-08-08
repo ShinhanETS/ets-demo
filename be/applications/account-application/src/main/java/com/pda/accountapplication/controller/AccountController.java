@@ -10,6 +10,7 @@ import com.pda.jwtutil.auth.AuthInfo;
 import com.pda.jwtutil.auth.AuthUser;
 import com.pda.jwtutil.auth.Authenticated;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class AccountController {
 
     @Autowired
@@ -40,6 +42,17 @@ public class AccountController {
         return ApiUtil.success("성공", accountDto);
     }
 
+    // 계좌 조회
+    @GetMapping("/{id}")
+    public GlobalResponse<AccountDto> getAccountById(@PathVariable Long id){
+        log.info("hi 요청 들어옴 = {}", id);
+
+        AccountDto accountDto = accountService.getAccountById(id);
+
+        System.out.println(accountDto);
+        return ApiUtil.success("성공", accountDto);
+    }
+
     // 보유 종목 조회
     @GetMapping("/holdings")
     public GlobalResponse<List<HoldingDto>> getHoldings(@AuthInfo AuthUser authUser){
@@ -47,6 +60,32 @@ public class AccountController {
         return ApiUtil.success("성공", holdingDtoList);
     }
 
-    //
+    // 보유 종목 조회(거래권)
+    @GetMapping("/holdings/ets")
+    public GlobalResponse<List<HoldingDto>> getETSHoldings(@AuthInfo AuthUser authUser){
+        List<HoldingDto> holdingDtoList = holdingService.getHoldingList(authUser.getId());
+        return ApiUtil.success("성공", holdingDtoList);
+    }
+
+    // 보유 종목 조회(선물)
+    @GetMapping("/holdings/futures")
+    public GlobalResponse<List<HoldingDto>> getFutureHoldings(@AuthInfo AuthUser authUser){
+        List<HoldingDto> holdingDtoList = holdingService.getHoldingList(authUser.getId());
+        return ApiUtil.success("성공", holdingDtoList);
+    }
+
+    // 보유 종목 조회(ETN)
+    @GetMapping("/holdings/etn")
+    public GlobalResponse<List<HoldingDto>> getETNHoldings(@AuthInfo AuthUser authUser){
+        List<HoldingDto> holdingDtoList = holdingService.getHoldingList(authUser.getId());
+        return ApiUtil.success("성공", holdingDtoList);
+    }
+
+    // 보유 종목 조회(ETF)
+    @GetMapping("/holdings/etf")
+    public GlobalResponse<List<HoldingDto>> getETFHoldings(@AuthInfo AuthUser authUser){
+        List<HoldingDto> holdingDtoList = holdingService.getHoldingList(authUser.getId());
+        return ApiUtil.success("성공", holdingDtoList);
+    }
 
 }

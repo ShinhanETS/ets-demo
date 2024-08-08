@@ -25,7 +25,11 @@ public class HoldingDto {
 
     private Long quantity;
 
-    private Float totalPrice;
+    @JsonProperty("current_price")
+    private Double currentPrice;
+
+    @JsonProperty("total_price")
+    private Double totalPrice;
 
     private Integer country;
 }

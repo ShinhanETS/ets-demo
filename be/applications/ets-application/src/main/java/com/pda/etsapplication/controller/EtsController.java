@@ -1,8 +1,7 @@
-package com.pda.etsapplication.controller;
+package com.pda.etsapplication.controller.dto.req;
 
 import com.pda.apiutil.ApiUtil;
 import com.pda.apiutil.GlobalResponse;
-import com.pda.etsapplication.controller.dto.res.StocksDto;
 import com.pda.etsapplication.repository.NewsEntity;
 import com.pda.etsapplication.repository.PricesEntity;
 import com.pda.etsapplication.repository.StocksEntity;
@@ -19,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EtsController {
     private final EtsService etsService;
+    private final OfferService offerService;
 
     @GetMapping("/{country}/{sector}")
     public GlobalResponse<List<StocksDto>> getStocks(@PathVariable Integer country, @PathVariable String sector) {
@@ -34,6 +34,26 @@ public class EtsController {
 //            return ApiUtil.exception("데이터가 없습니다."); // 데이터가 없을 경우 404 응답
 //        }
         return ApiUtil.success("종목의 가격 데이터", prices); // 데이터가 있을 경우 200 응답과 데이터 반환
+    }
+
+    // 주문(매수)
+    @Authenticated
+    @PostMapping("/stock/buy")
+    public GlobalResponse<OfferTradeResDto> createBuyOffer(@AuthInfo AuthUser authUser, @RequestBody OfferReqDto offerReqDto){
+
+        OfferTradeResDto offer = offerService.placeBuyOrder(offerReqDto, authUser.getId());
+        if (offer.getOrder().getStatus().equals("FAILED")) {
+            return ApiUtil.success("잔고 부족으로 주문 및 체결 실패", offer);
+        }
+        return ApiUtil.success("주문 및 체결 성공", offer);
+    }
+
+    // 매도
+    @PostMapping("/stock/sell")
+    public GlobalResponse<OfferTradeResDto> createSellOffer(@AuthInfo AuthUser authUser, @RequestBody OfferReqDto offerReqDto){
+        OfferTradeResDto offer = offerService.placeSellOrder(offerReqDto, authUser.getId());
+
+        return ApiUtil.success("주문 및 체결 성공", offer);
     }
 
     @GetMapping("/stock/{stockCode}/news")
