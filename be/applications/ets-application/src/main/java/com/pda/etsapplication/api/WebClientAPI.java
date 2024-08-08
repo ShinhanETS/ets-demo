@@ -19,13 +19,15 @@ public class WebClientAPI {
     private final WebClient webClient;
 
 
-    @Value("${server.host.sise-server}")
+    @Value("${host.sise-server}")
     private String siseServer;
 
-    @Value("${server.host.account-server}")
+    @Value("${host.account-server}")
     private String accountUrl;
 
     public AccountResDto getAccount(Long id){
+        log.info("account host: " + accountUrl);
+
         Mono<GlobalResponse<AccountResDto>> mono = webClient.get().uri(accountUrl + "/api/accounts/" + id)
                 .exchangeToMono(reponse -> {
                     if (!reponse.statusCode().is2xxSuccessful()){

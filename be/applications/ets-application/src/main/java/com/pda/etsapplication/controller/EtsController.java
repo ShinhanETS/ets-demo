@@ -10,6 +10,7 @@ import com.pda.etsapplication.service.EtsService;
 import com.pda.etsapplication.service.OfferService;
 import com.pda.jwtutil.auth.AuthInfo;
 import com.pda.jwtutil.auth.AuthUser;
+import com.pda.jwtutil.auth.Authenticated;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +50,7 @@ public class EtsController {
     }
 
     // 주문(매수)
+    @Authenticated
     @PostMapping("/stock/buy")
     public GlobalResponse<OfferTradeResDto> createOffer(@AuthInfo AuthUser authUser, @RequestBody OfferReqDto offerReqDto) {
         OfferTradeResDto offer = offerService.placeBuyOrder(offerReqDto, authUser.getId());
