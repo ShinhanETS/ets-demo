@@ -1,6 +1,8 @@
 package com.pda.etsapplication.service;
 
 import com.pda.etsapplication.controller.dto.res.StocksDto;
+import com.pda.etsapplication.repository.DescriptionEntity;
+import com.pda.etsapplication.repository.DescriptionRepository;
 import com.pda.etsapplication.repository.NewsEntity;
 import com.pda.etsapplication.repository.NewsRepository;
 import com.pda.etsapplication.repository.PricesEntity;
@@ -23,6 +25,7 @@ public class EtsService {
     private final StocksRepository stocksRepository;
     private final PricesRepository pricesRepository;
     private final NewsRepository newsRepository;
+    private final DescriptionRepository descriptionRepository;
 
     public List<StocksDto> getStocksByCountryAndSector(Integer country, String sector) {
         List<StocksEntity> stocks = stocksRepository.findByCountryAndSector(country, sector);
@@ -78,5 +81,10 @@ public class EtsService {
         Collections.shuffle(news);
 
         return news.subList(0, 20);
+    }
+
+    public DescriptionEntity getDescription(String stockCode) {
+        return descriptionRepository.findByStockCode(stockCode)
+            .orElseThrow(() -> CommonException.create("해당 상품 설명이 아직 없음"));
     }
 }
