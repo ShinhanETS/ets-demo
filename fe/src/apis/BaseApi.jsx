@@ -40,6 +40,12 @@ export const siseInstance = axios.create({
   withCredentials: true,
 });
 
+// 계좌 인스턴스
+export const accountInstance = axios.create({
+  baseURL: `${BASE_URL}/accounts`,
+  withCredentials: true,
+});
+
 // 인터셉터로 토큰 넣어주기 (로그인 제외 다 해줘야함)
 membershipInstance.interceptors.request.use(
   (config) => {
@@ -70,6 +76,20 @@ etsInstance.interceptors.request.use(
 
 // 인터셉터로 토큰 넣어주기 (로그인 제외 다 해줘야함)
 siseInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// 인터셉터로 토큰 넣어주기 (로그인 제외 다 해줘야함)
+accountInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
     if (token) {

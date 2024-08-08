@@ -52,7 +52,7 @@ export default function ChartContainer({ nowPrice }) {
       return new Date(nDate);
     });
 
-  const height = window.innerHeight - 244;
+  const height = window.innerHeight - 264;
   const width = window.innerWidth;
   const margin = { left: 0, right: 48, top: 0, bottom: 24 };
 

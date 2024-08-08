@@ -1,5 +1,5 @@
 // /ets/stock/CKX24/news
-import { etsInstance } from "./BaseApi";
+import { accountInstance, etsInstance } from "./BaseApi";
 
 export async function getDesc(stockCode) {
   try {
@@ -28,6 +28,16 @@ export async function sellStock(data) {
       price: data.price,
       quantity: data.quantity,
     });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw error;
+  }
+}
+
+export async function getSellQuantity(stockCode) {
+  try {
+    const response = await accountInstance.get(`/stock/sell/${stockCode}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);

@@ -8,7 +8,7 @@ export default function Back() {
   };
 
   return (
-    <div className="px-[22px] py-6 bg-white-1">
+    <div className="w-full px-[22px] py-6 bg-white-1 fixed top-0 left-0 z-10">
       <img src={BackImg} onClick={navigateHome} />
     </div>
   );

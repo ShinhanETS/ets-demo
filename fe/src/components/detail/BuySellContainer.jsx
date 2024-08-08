@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import ConfirmAlert from "./ConfirmAlert";
-import { buyStock, getCharts, sellStock } from "../../apis/DetailApi";
+import {
+  buyStock,
+  getCharts,
+  getSellQuantity,
+  sellStock,
+} from "../../apis/DetailApi";
 import SimpleChart from "./SimpleChart";
 import Loading from "./Loading";
 import { useParams } from "react-router-dom";
@@ -21,6 +26,7 @@ export default function BuySellContainer({
   const [chartData, setChartData] = useState([]);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSell, setIsSell] = useState(false);
+  const [sellQuantity, setSellQuantity] = useState([]);
 
   const params = useParams();
 
@@ -36,7 +42,18 @@ export default function BuySellContainer({
       }
     };
 
+    const getSellQuantities = async () => {
+      try {
+        const response = await getSellQuantity(stockCode);
+        setSellQuantity(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        return;
+      }
+    };
+
     getChart();
+    getSellQuantities();
   }, []);
 
   useEffect(() => {
@@ -148,8 +165,10 @@ export default function BuySellContainer({
         message={message}
         isSuccess={isSuccess}
         isSell={isSell}
+        setValue={setValue}
+        setAmount={setAmount}
       />
-      <div className="z-10 h-[calc(100vh_-_244px)] flex flex-col pb-[1.4rem] gap-2 bg-white-1 overflow-x-hidden overflow-y-scroll">
+      <div className="z-10 h-[calc(100vh_-_264px)] flex flex-col pb-[1.4rem] gap-2 bg-white-1 overflow-x-hidden overflow-y-scroll">
         <div>
           {isLoading ? <Loading /> : <SimpleChart chartData={chartData} />}
         </div>
@@ -172,7 +191,7 @@ export default function BuySellContainer({
                   <input
                     className="w-full bg-transparent border border-[#D9D9D9] px-[2.5rem] py-[10px] rounded text-end focus:outline-none"
                     onChange={onChange}
-                    value={value === 0 ? "" : value}
+                    value={value === 0 ? "" : value.toLocaleString()}
                     placeholder="0"
                   />
                   <span className="absolute right-[1.1rem]">주</span>
@@ -188,7 +207,9 @@ export default function BuySellContainer({
           <div className="flex flex-col gap-2">
             <div className="flex justify-between text-[1.1rem]">
               <span>총 금액</span>
-              <span>{amount.toLocaleString()} {currencySymbol}</span>
+              <span>
+                {amount.toLocaleString()} {currencySymbol}
+              </span>
             </div>
             {isBuy ? (
               <div

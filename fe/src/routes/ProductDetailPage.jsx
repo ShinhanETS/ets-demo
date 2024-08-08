@@ -25,7 +25,7 @@ export default function ProductDetail() {
       setIsBottom(false);
     }
   }, [tab]);
-  console.log(detailData)
+  console.log(detailData);
 
   return (
     <div className="h-full bg-white-1">
