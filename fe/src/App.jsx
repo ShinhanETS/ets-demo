@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
-import LandingPage from './routes/LandingPage';
 import MainPage from './routes/MainPage';
 import Layout from './components/common/Layout';
 import LoginPage from './routes/LoginPage';
@@ -13,8 +12,7 @@ export default function App() {
         <Routes>
           <Route path='/login' element={<LoginPage />} />
           <Route element={<Layout />}>
-            <Route path='/' element={<LandingPage />} />
-            <Route path='/main' element={<MainPage />} />
+            <Route path='/' element={<MainPage />} />
             <Route path='/detail/:productId' element={<ProductDetailPage />} />
           </Route>
         </Routes>

@@ -1,7 +1,6 @@
 import { Sheet } from "react-modal-sheet";
 import { createContext, useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
-import BottomSheetGradeEx from "../../assets/BottomSheetGradeEx.svg";
 import CheckLogin from "../../hooks/CheckLogin";
 import { fetchMembership } from "../../apis/MembershipApi";
 import { bottomState } from "../../recoil/state";
@@ -82,7 +81,7 @@ export default function Layout() {
                 </p>
               </div>
               <div
-                className="flex justify-between items-center w-full h-[18vh] mb-8 rounded-2xl"
+                className="flex justify-between items-center w-full h-[10vh] mb-8 rounded-2xl"
                 style={{
                   backgroundColor: "rgba(9, 55, 188, 0.05)",
                 }}
