@@ -99,6 +99,7 @@ public class HoldingService {
 
             if (holding == null) {
                 log.info("put holding 1-1");
+                log.info(putHoldingDto.toString());
               holdingRepository.save(Holding.builder()
                       .account(account)
                       .type(putHoldingDto.getStockType())
