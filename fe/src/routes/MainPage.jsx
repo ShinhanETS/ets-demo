@@ -111,11 +111,11 @@ export default function MainPage() {
   return (
     <div className="flex flex-col h-screen bg-white relative select-none">
       <div className="min-h-[20vh] bg-gradient-to-b from-[#0937BC] to-[#2D09BC] flex">
-        <div className="mt-[4vh] ml-[6vw] flex text-2xl font-semibold items-start">
+        <div className="mt-[4vh] ml-[6vw] flex text-xl font-semibold items-start">
           {["국내", "해외", "MY거래"].map((text, index) => (
             <div
               key={index}
-              className={`mx-2.5 my-2 cursor-pointer ${
+              className={`mx-2.5 my-3 cursor-pointer ${
                 selectedTab === index
                   ? "text-white text-white-1 border-b-[0.2rem]"
                   : "text-[#FFFFFF] opacity-60"
@@ -249,7 +249,7 @@ export default function MainPage() {
                     <div className="flex flex-col gap-1 justify-between">
                       <h3 className="font-semibold">{product.name}</h3>
                       <p className="text-[#666666] font-medium text-sm">
-                        ({product.description})
+                        {product.description}
                       </p>
                     </div>
                   </div>
@@ -257,8 +257,10 @@ export default function MainPage() {
                     <p className={`text-lg font-semibold ${chgClass}`}>
                       {product.chg}
                     </p>
-                    <p className="font-medium text-black-1 text-nowrap">
-                      {product.close}
+                    <p className="text-[1rem] text-black-1 text-nowrap">
+                      {product.currencySymbol === "원"
+                        ? product.close.toLocaleString()
+                        : product.close}
                       {product.currencySymbol}
                     </p>
                   </div>

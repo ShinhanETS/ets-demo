@@ -26,7 +26,7 @@ export default function BuySellContainer({
   const [chartData, setChartData] = useState([]);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSell, setIsSell] = useState(false);
-  const [sellQuantity, setSellQuantity] = useState([]);
+  const [sellQuantity, setSellQuantity] = useState({});
 
   const params = useParams();
 
@@ -45,6 +45,8 @@ export default function BuySellContainer({
     const getSellQuantities = async () => {
       try {
         const response = await getSellQuantity(stockCode);
+        console.log("============");
+        console.log(response.data);
         setSellQuantity(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -186,7 +188,12 @@ export default function BuySellContainer({
                 </div>
               </div>
               <div className="flex flex-col text-[0.9rem]">
-                <span>수량</span>
+                <div className="flex justify-between">
+                  <span>수량</span>
+                  {!isBuy && (
+                    <span className="text-blue-1">매도 가능 수량: {sellQuantity.quantity}</span>
+                  )}
+                </div>
                 <div className="relative flex items-center">
                   <input
                     className="w-full bg-transparent border border-[#D9D9D9] px-[2.5rem] py-[10px] rounded text-end focus:outline-none"
