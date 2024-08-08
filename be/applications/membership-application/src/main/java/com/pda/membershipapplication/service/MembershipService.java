@@ -71,8 +71,8 @@ public class MembershipService {
     private Long toPoint(TradeKafkaDto tradeKafkaDto) {
         Long point = 0L;
         // 0~200까지
-        point += tradeKafkaDto.getTotalTradeAmount() * 3;
-        point += tradeKafkaDto.getTotalKRWAmount().longValue()/20000;
+        point += tradeKafkaDto.getTotalTradeAmount().longValue()/40000;
+        point += tradeKafkaDto.getTotalKRWAmount().longValue()/40000;
         return point;
     }
 }
