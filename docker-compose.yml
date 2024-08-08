@@ -231,6 +231,8 @@ services:
             - SPRING_DATASOURCE_URL=jdbc:mysql://ets-db:3306/ets-db?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
             - SPRING_DATASOURCE_USERNAME=root
             - SPRING_DATASOURCE_PASSWORD=root
+            - HOST_SISE-SERVER=http://sise-server:8085
+            - HOST_ACCOUNT-SERVER=http://account-server:8081
         command: "java -jar ets-application-0.0.1-SNAPSHOT.jar"
         depends_on:
             nginx:
