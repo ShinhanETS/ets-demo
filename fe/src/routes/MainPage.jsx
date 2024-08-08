@@ -1,13 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import MainBanner from "../assets/MainBanner.svg";
-import Pin from "../assets/Pin.svg";
+import Korea from "../assets/Korea.webp";
+import USA from "../assets/USA.png";
+import Europe from "../assets/Europe.png";
+import China from "../assets/China.png";
 import MainButton from "../components/main/MainButton";
+import MainModal from "../components/main/MainModal";
+import { fetchMembership } from "../apis/MembershipApi";
 import { useRecoilState } from "recoil";
 import { bottomState } from "../recoil/state";
 
 export default function MainPage() {
   const [selectedTab, setSelectedTab] = useState(0);
   const [selectedButton, setSelectedButton] = useState(0);
+  const [showModal, setShowModal] = useState(true);
   const [isBotton, setIsBottom] = useRecoilState(bottomState);
 
   useEffect(() => {
@@ -17,9 +23,18 @@ export default function MainPage() {
   const handleButtonClick = (number) => {
     setSelectedButton(number);
   };
+
   const handleTapClick = (index) => {
     setSelectedTab(index);
   };
+
+  useEffect(() => {
+    const modalStatus = localStorage.getItem("modalOpen");
+    if (modalStatus === "false") {
+      setShowModal(false);
+    }
+  }, []);
+
   return (
     <div className="flex flex-col h-screen bg-white relative select-none">
       <div className="min-h-[20vh] bg-gradient-to-b from-[#0937BC] to-[#2D09BC] flex">
@@ -54,22 +69,39 @@ export default function MainPage() {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col justify-center items-start p-8 gap-2 w-[91vw] h-[16vh] mx-[4.5vw] bg-white-1 rounded-2xl absolute mt-[12vh] drop-shadow-md">
-            <div className="font-medium text-sm">현재 OOO님의 거래현황</div>
-            <div className="flex flex-col w-full">
-              <div className="flex justify-between w-full font-extrabold text-md">
-                <div className="flex gap-2">
-                  <img src={Pin} alt="" className="" />
-                  누적 거래금액
+          <div className="flex flex-col justify-center items-start p-6 gap-2 w-[91vw] h-[16vh] mx-[4.5vw] bg-white-1 rounded-2xl absolute mt-[12vh] drop-shadow-md">
+            <div className="font-medium text-sm">현재 OOO님의 예수금</div>
+            <div className="flex w-full gap-1 justify-around">
+              <div className="flex flex-col items-center">
+                <div className="flex items-center gap-1 font-medium">
+                  <img src={Korea} alt="" className="w-5 h-5" />
+                  <div>KRW</div>
                 </div>
-                <div>123,456원</div>
+                <div className="font-bold w-full break-words">130,400</div>
               </div>
-              <div className="flex justify-between w-full font-extrabold text-md">
-                <div className="flex gap-2">
-                  <img src={Pin} alt="" className="" />
-                  누적 거래량
+              <div className="max-w-[2px] w-[0.5%] h-full bg-[#c0c0c0]"></div>
+              <div className="flex flex-col items-center">
+                <div className="flex items-center gap-0 font-medium">
+                  <img src={USA} alt="" className="w-6 h-6" />
+                  <div>USD</div>
                 </div>
-                <div>123,456원</div>
+                <div className="font-bold">142.13</div>
+              </div>
+              <div className="max-w-[3px] w-[0.5%] h-full bg-[#c0c0c0]"></div>
+              <div className="flex flex-col items-center">
+                <div className="flex items-center gap-1 font-medium">
+                  <img src={Europe} alt="" className="w-5 h-5" />
+                  <div>EUR</div>
+                </div>
+                <div className="font-bold">14.53</div>
+              </div>
+              <div className="max-w-[3px] w-[0.5%] h-full bg-[#c0c0c0]"></div>
+              <div className="flex flex-col items-center">
+                <div className="flex items-center gap-1 font-medium">
+                  <img src={China} alt="" className="w-5 h-5" />
+                  <div>CNY</div>
+                </div>
+                <div className="font-bold">654.5</div>
               </div>
             </div>
           </div>
@@ -129,6 +161,12 @@ export default function MainPage() {
             </div>
           ))}
         </div>
+      </div>
+      <div className="flex justify-center items-center mt-20">
+        {/* 모달 표시 */}
+        {showModal && (
+          <MainModal modalOpen={showModal} setModalOpen={setShowModal} />
+        )}
       </div>
     </div>
   );

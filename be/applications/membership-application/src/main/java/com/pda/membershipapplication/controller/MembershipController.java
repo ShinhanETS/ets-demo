@@ -20,6 +20,6 @@ public class MembershipController {
     @Authenticated
     public GlobalResponse<MyMembershipServiceResponse> myMembership(@AuthInfo AuthUser authUser) {
         return ApiUtil.success("멤버쉽 불러오기 성공",
-            membershipService.getMembershipByMemberId(authUser.getId()));
+            membershipService.getMembershipByMemberId(authUser.getUsername(), authUser.getId()));
     }
 }

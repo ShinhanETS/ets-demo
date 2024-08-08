@@ -25,6 +25,7 @@ export default function BuySellContainer({ isBuy, price }) {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const [value, setValue] = useState(0);
   const chartData = initialData;
   // const [chartData, setChartData] = useRecoilState(chartState);
 
@@ -33,13 +34,24 @@ export default function BuySellContainer({ isBuy, price }) {
   // }, []);
 
   const onChange = (e) => {
-    setAmount(e.target.value * 9120);
-    setIsError(false);
+    // setAmount(e.target.value * 9120);
+    // setIsError(false);
     // setAmount(e.target.value * price);
+    const inputValue = e.target.value.replace(/,/g, "");
+    const numericValue = inputValue.replace(/[^0-9]/g, "");
+    const parsedValue = numericValue === "" ? 0 : parseInt(numericValue, 10);
+    if (isNaN(parsedValue)) {
+      setIsError(true);
+      setValue(0);
+    } else {
+      setValue(parsedValue);
+      setAmount(parsedValue * 9120);
+    }
   };
 
   const onBuy = () => {
     // 매수 로직
+    // 사용자가 보유한 금액보다 넘지 않게
     if (amount === 0) {
       // console.log("수량을 입력해주세요.");
       setIsError(true);
@@ -51,6 +63,7 @@ export default function BuySellContainer({ isBuy, price }) {
 
   const onSell = () => {
     // 매도 로직
+    // 사용자가 보유한 현황보다 넘지 않게
     if (amount === 0) {
       setIsError(true);
       setMessage("수량을 입력해주세요.");
@@ -62,27 +75,29 @@ export default function BuySellContainer({ isBuy, price }) {
   // const chartData = useRecoilValue(chartState);
   // const chartData = initialData.reverse();
 
-  // const ScaleProvider =
-  //   discontinuousTimeScaleProviderBuilder().inputDateAccessor((d) => {
-  //     const year = d?.date?.substr(0, 4);
-  //     const month = d?.date?.substr(4, 2);
-  //     const day = d?.date?.substr(6, 2);
-  //     const nDate = `${year}-${month}-${day}`;
-  //     return new Date(nDate);
-  //   });
   const ScaleProvider =
-    discontinuousTimeScaleProviderBuilder().inputDateAccessor(
-      (d) => new Date(d.date)
-    );
+    discontinuousTimeScaleProviderBuilder().inputDateAccessor((d) => {
+      const year = d?.date?.substr(0, 4);
+      const month = d?.date?.substr(5, 2);
+      const day = d?.date?.substr(8, 2);
+      const nDate = `${year}-${month}-${day}`;
+      return new Date(nDate);
+    });
+  // const ScaleProvider =
+  //   discontinuousTimeScaleProviderBuilder().inputDateAccessor(
+  //     (d) => new Date(d.date)
+  //   );
 
-  // const height = window.innerHeight - 266;
-  const height = 180;
+  const height = (window.innerHeight - 222) / 2.5;
+  // const height = 220;
   const width = window.innerWidth;
-  const margin = { left: 0, right: 48, top: 0, bottom: 24 };
+  const margin = { left: 8, right: 42, top: 0, bottom: 24 }; // 해외
+  // const margin = { left: 8, right: 48, top: 0, bottom: 24 }; // 국내
 
   const { data, xScale, xAccessor, displayXAccessor } =
     ScaleProvider(chartData);
-  const pricesDisplayFormat = format(",");
+  const pricesDisplayFormat = format(".1f"); // 해외
+  // const pricesDisplayFormat = format(","); // 국내
 
   const start = xAccessor(data[data.length - 1]);
   const end = xAccessor(data[data.length - 31]);
@@ -178,14 +193,10 @@ export default function BuySellContainer({ isBuy, price }) {
               />
               <XAxis
                 showGridLines
-                showTickLabel={true}
                 tickStrokeStyle="#BABABA"
                 strokeStyle="#BABABA"
-                tickLabelFill="#A9A9A9"
-                gridLinesStrokeWidth={0.2}
-                tickStrokeWidth={0.2}
-                strokeWidth={0.02}
-                // tickFormat={timeDisplayFormat}
+                showTicks={true}
+                showTickLabel={true}
               />
               <YAxis
                 showGridLines
@@ -233,8 +244,10 @@ export default function BuySellContainer({ isBuy, price }) {
                   <input
                     className="w-full bg-transparent border border-[#D9D9D9] px-[2.5rem] py-[10px] rounded text-end focus:outline-none"
                     onChange={onChange}
+                    value={value === 0 ? "" : value}
+                    placeholder="0"
                   />
-                  <span className="absolute right-[1.1rem]">개</span>
+                  <span className="absolute right-[1.1rem]">주</span>
                 </div>
               </div>
               {isError && (

@@ -44,13 +44,23 @@ export default function ArticleContainer() {
     },
   ];
 
+  const openLink = (link) => {
+    window.open(link);
+  };
+
   return (
-    <div className="h-[calc(100vh_-_222px)] flex flex-col gap-8 bg-white-1 px-[1.5rem] pt-[0.8rem] pb-[2.8rem] overflow-scroll">
+    <div className="h-[calc(100vh_-_222px)] flex flex-col gap-8 bg-white-1 px-[1.5rem] pt-[0.8rem] pb-[4rem] overflow-scroll">
       {articles.map((article, idx) => (
-        <div key={idx} className="flex gap-4 items-center">
-          <div className="flex flex-col gap-2 text-black">
+        <div
+          key={idx}
+          className="flex gap-4 items-center"
+          onClick={() => openLink(article.image_url)}
+        >
+          <div className="flex flex-col gap-1 text-black">
             <span className="font-bold">{article.title}</span>
-            <span className="text-xs line-clamp-3">{article.content}</span>
+            <span className="text-[0.8rem] line-clamp-3">
+              {article.content}
+            </span>
           </div>
           <img
             src={article.image_url}

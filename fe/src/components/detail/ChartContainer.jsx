@@ -44,7 +44,9 @@ export default function ChartContainer({ nowPrice }) {
 
   const { data, xScale, xAccessor, displayXAccessor } =
     ScaleProvider(chartData);
-  const pricesDisplayFormat = format(",");
+  const pricesDisplayFormat = format(".1f");
+  // const pricesDisplayFormat = format(",");
+  const volumeDisplayFormat = format("~s");
 
   const start = xAccessor(data[data.length - 1]);
   const end = xAccessor(data[data.length - 31]);
@@ -206,10 +208,12 @@ export default function ChartContainer({ nowPrice }) {
             showGridLines
             tickStrokeStyle="#BABABA"
             strokeStyle="#BABABA"
+            showTicks={true}
+            showTickLabel={true}
           />
           <YAxis
             ticks={4}
-            tickFormat={pricesDisplayFormat}
+            tickFormat={volumeDisplayFormat}
             tickLabelFill="#BABABA"
             tickStrokeStyle="#BABABA"
             strokeStyle="#BABABA"

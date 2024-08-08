@@ -281,20 +281,6 @@ services:
                 condition: service_completed_successfully
             kafka-ui:
                 condition: service_started
-    alert-db:
-        container_name: alert-db
-        image: mysql:8.0.33-oracle
-        environment:
-            - MYSQL_ROOT_PASSWORD=root
-            - MYSQL_DATABASE=alert-db
-            - TZ="Asia/Seoul"
-        ports:
-            - "3314:3306"
-        extra_hosts:
-            - "host.docker.internal:host-gateway"
-        command:
-            - --character-set-server=utf8mb4
-            - --collation-server=utf8mb4_unicode_ci
 
     alert-server:
         container_name: alert-server
@@ -314,8 +300,6 @@ services:
         command: "java -jar alert-application-0.0.1-SNAPSHOT.jar"
         depends_on:
             nginx:
-                condition: service_started
-            alert-db:
                 condition: service_started
             spring-builder:
                 condition: service_completed_successfully
@@ -338,7 +322,7 @@ services:
             context: fe
             dockerfile: Dockerfile
         ports:
-            - '3000:3000'
+            - '8888:8888'
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         depends_on:
