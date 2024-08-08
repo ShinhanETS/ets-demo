@@ -1,7 +1,8 @@
-package com.pda.etsapplication.controller.dto.req;
+package com.pda.etsapplication.controller;
 
 import com.pda.apiutil.ApiUtil;
 import com.pda.apiutil.GlobalResponse;
+import com.pda.etsapplication.controller.dto.res.StocksDto;
 import com.pda.etsapplication.repository.NewsEntity;
 import com.pda.etsapplication.repository.PricesEntity;
 import com.pda.etsapplication.repository.StocksEntity;
@@ -20,8 +21,8 @@ public class EtsController {
     private final EtsService etsService;
 
     @GetMapping("/{country}/{sector}")
-    public GlobalResponse<List<StocksEntity>> getStocks(@PathVariable Integer country, @PathVariable String sector) {
-        List<StocksEntity> stocks = etsService.getStocksByCountryAndSector(country, sector);
+    public GlobalResponse<List<StocksDto>> getStocks(@PathVariable Integer country, @PathVariable String sector) {
+        List<StocksDto> stocks = etsService.getStocksByCountryAndSector(country, sector);
 
         return ApiUtil.success("종목 데이터", stocks);
     }
