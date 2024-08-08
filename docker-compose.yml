@@ -322,7 +322,7 @@ services:
             context: fe
             dockerfile: Dockerfile
         ports:
-            - '8888:8888'
+            - '8787:8787'
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         depends_on:
