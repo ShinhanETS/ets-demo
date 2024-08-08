@@ -1,14 +1,22 @@
-package com.pda.etsapplication.controller.dto.req;
+package com.pda.etsapplication.controller;
 
 import com.pda.apiutil.ApiUtil;
 import com.pda.apiutil.GlobalResponse;
+import com.pda.etsapplication.controller.dto.res.StocksDto;
+import com.pda.etsapplication.dto.OfferReqDto;
+import com.pda.etsapplication.dto.OfferTradeResDto;
 import com.pda.etsapplication.repository.NewsEntity;
 import com.pda.etsapplication.repository.PricesEntity;
-import com.pda.etsapplication.repository.StocksEntity;
 import com.pda.etsapplication.service.EtsService;
+import com.pda.etsapplication.service.OfferService;
+import com.pda.jwtutil.auth.AuthInfo;
+import com.pda.jwtutil.auth.AuthUser;
+import com.pda.jwtutil.auth.Authenticated;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
