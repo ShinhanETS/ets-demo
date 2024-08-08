@@ -13,6 +13,7 @@ import MainButton from '../components/main/MainButton';
 import MainModal from '../components/main/MainModal'; 
 import { fetchProductList } from '../apis/EtsApi';
 import { UserContext } from '../components/common/Layout';
+import imageMapping from '../components/main/RenderImage';
 
 export const tabNumberToURL = {
   0: 'CERs',
@@ -52,6 +53,7 @@ export default function MainPage() {
             const response = await fetchProductList(selectedTab, tabNumberToURL[selectedButton]);
             if (response.success) {
                 setProductList(response.data);
+                console.log(response.data)
             }
         };
         fetchProducts();
@@ -167,7 +169,7 @@ export default function MainPage() {
                     />
                 </div>
 
-                <div className="space-y-2 mt-[3vh] overflow-y-auto h-[60vh]">
+                <div className="space-y-2 mt-[3vh] overflow-y-auto h-[55vh]">
                   {productList.length === 0 ? 
                     (
                       <div className="flex flex-col items-center justify-center mt-10">
@@ -196,7 +198,7 @@ export default function MainPage() {
                                     onClick={() => handleProductClick(product)}
                                 >
                                     <div className='flex gap-4 items-center'>
-                                        <img src="https://file.alphasquare.co.kr/media/images/stock_logo/kr/005930.png" alt="" className='rounded-full w-12 h-12' />
+                                        <img src={imageMapping[product?.name]} alt="" className='rounded-full w-12 h-12' />
                                         <div className='flex flex-col gap-1 justify-between'>
                                             <h3 className="font-semibold">{product.name}</h3>
                                             <p className="text-[#666666] font-medium text-sm">({product.description})</p>

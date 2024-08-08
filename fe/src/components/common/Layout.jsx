@@ -33,7 +33,7 @@ export default function Layout() {
           <Outlet username={membershipData ? membershipData.username : ''} />
         </div>
 
-        <div className="flex items-center justify-between font-semibold fixed bottom-0 left-0 right-0 h-[7vh] bg-[#EAEDF5] shadow-lg px-6 cursor-pointer rounded-t-2xl" onClick={() => setOpen(true)}>
+        <div className="flex items-center justify-between font-semibold fixed bottom-0 left-0 right-0 h-[7vh] bg-[#EAEDF5] shadow-lg px-6 cursor-pointer rounded-t-2xl select-none" onClick={() => setOpen(true)}>
           <div className='flex gap-3 items-center'>
             <p className='font-bold'>{membershipData?.username}님</p> 
             <img src={membershipData?.gradeImage} className='h-[4vh]' alt="Grade Icon" />
