@@ -8,13 +8,8 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         "/api": {
-          target: "http://localhost",
+          target: env.VITE_BASE_URL,
           changeOrigin: true,
-        },
-        "http://133.186.218.19/api": {
-          target: env.VITE_REAL_URL,
-          changeOrigin: true,
-          // rewrite: (path) => path.replace(/^\/\real/, ""),
         },
       },
     },

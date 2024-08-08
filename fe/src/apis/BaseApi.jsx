@@ -1,8 +1,6 @@
 import axios from 'axios';
 
-export const BASE_URL = import.meta.env.VITE_BASE_URL;
-
-export const REAL_URL = import.meta.env.VITE_REAL_URL;
+export const BASE_URL = '/api';
 
 // 로그인 인스턴스
 export const loginInstance = axios.create({
@@ -18,7 +16,7 @@ export const membershipInstance = axios.create({
 
 // ets 인스턴스
 export const estInstance = axios.create({
-  baseURL: `${REAL_URL}/ets`,
+  baseURL: `${BASE_URL}/ets`,
   withCredentials: true,
 });
 
