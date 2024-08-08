@@ -2,6 +2,7 @@ package com.pda.accountapplication.service;
 
 import com.pda.accountapplication.api.WebClientAPI;
 import com.pda.accountapplication.dto.HoldingDto;
+import com.pda.accountapplication.dto.SellQuantityDto;
 import com.pda.accountapplication.repository.Holding;
 import com.pda.accountapplication.repository.HoldingRepository;
 import lombok.RequiredArgsConstructor;
@@ -53,4 +54,12 @@ public class HoldingService {
     }
 
 
+    public SellQuantityDto getSellQuantity(Long id, String stockCode) {
+        Holding holding = holdingRepository.findByIdAndStockCode(id, stockCode);
+        return SellQuantityDto.builder()
+                .acctNo(holding.getAccount().getAcctNo())
+                .quantity(holding.getQuantity())
+                .stockCode(stockCode)
+                .build();
+    }
 }

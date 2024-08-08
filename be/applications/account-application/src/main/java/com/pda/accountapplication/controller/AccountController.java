@@ -2,6 +2,7 @@ package com.pda.accountapplication.controller;
 
 import com.pda.accountapplication.dto.AccountDto;
 import com.pda.accountapplication.dto.HoldingDto;
+import com.pda.accountapplication.dto.SellQuantityDto;
 import com.pda.accountapplication.service.AccountService;
 import com.pda.accountapplication.service.HoldingService;
 import com.pda.apiutil.ApiUtil;
@@ -89,6 +90,11 @@ public class AccountController {
     }
 
     // 보유 주식 매도 가능 수량 조회
+    @GetMapping("/stock/sell/{stock_code}")
+    public GlobalResponse<SellQuantityDto> getSellQuantity(@AuthInfo AuthUser authUser, @PathVariable("stock_code") String stockCode ){
+        SellQuantityDto sellQuantityDto = holdingService.getSellQuantity(authUser.getId(), stockCode);
+        return ApiUtil.success("성공", sellQuantityDto);
+    }
 
 
     // 당월투자금액
