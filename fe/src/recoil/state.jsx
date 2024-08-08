@@ -12,8 +12,15 @@ export const detailTabState = atom({
     default: 0,
 })
 
-// 멤버쉽 데이터
-export const membershipState = atom({
-    key: 'membership',
-    default: {}
+// 상세보기 할 종목
+export const productState = atom({
+    key: 'productState',
+    default:         
+        {
+            "name": "KAU23",
+            "description": "한국 탄소 배출권(2023년 만기)",
+            "chg": "0.5%",
+            "close": 9150.0,
+            "currencySymbol": "원"
+        },
 })
