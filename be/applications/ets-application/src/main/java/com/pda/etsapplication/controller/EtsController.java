@@ -45,11 +45,19 @@ public class EtsController {
 
     // 주문(매수)
     @PostMapping("/stock/buy")
-    public GlobalResponse<OfferTradeResDto> createOffer(@AuthInfo AuthUser authUser, @RequestBody OfferReqDto offerReqDto){
+    public GlobalResponse<OfferTradeResDto> createBuyOffer(@AuthInfo AuthUser authUser, @RequestBody OfferReqDto offerReqDto){
         OfferTradeResDto offer = offerService.placeBuyOrder(offerReqDto, authUser.getId());
         if(offer.getOrder().getStatus().equals("FAILED")){
             return ApiUtil.success("잔고 부족으로 주문 및 체결 실패", offer);
         }
+        return ApiUtil.success("주문 및 체결 성공", offer);
+    }
+
+    // 매도
+    @PostMapping("/stock/sell")
+    public GlobalResponse<OfferTradeResDto> createSellOffer(@AuthInfo AuthUser authUser, @RequestBody OfferReqDto offerReqDto){
+        OfferTradeResDto offer = offerService.placeSellOrder(offerReqDto, authUser.getId());
+
         return ApiUtil.success("주문 및 체결 성공", offer);
     }
 }
