@@ -23,7 +23,7 @@ public class MembershipService {
     private final MembershipContentRepository membershipContentRepository;
     private final GradeRepository gradeRepository;
 
-    public MyMembershipServiceResponse getMembershipByMemberId(final Long memberId) {
+    public MyMembershipServiceResponse getMembershipByMemberId(final String username, final Long memberId) {
         Member member = memberRepository
             .findByMemberIdAndSettlementYm(memberId, toSettlementYm(LocalDate.now()))
             .orElse(null);
@@ -37,6 +37,7 @@ public class MembershipService {
         return MyMembershipServiceResponse.builder()
             .point(member.getPoint())
             .grade(grade.getName())
+            .username(username)
             .gradeImage(grade.getImage())
             .maxPoint(grade.getMaxPoint())
             .minPoint(grade.getMinPoint())

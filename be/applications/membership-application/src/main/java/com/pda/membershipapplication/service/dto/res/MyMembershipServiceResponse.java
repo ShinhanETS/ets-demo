@@ -13,6 +13,7 @@ import java.util.List;
 @Builder
 @Getter
 public class MyMembershipServiceResponse {
+    private String username;
     private String grade;
     private String gradeImage;
     private Long point;
