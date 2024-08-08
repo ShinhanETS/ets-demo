@@ -38,7 +38,7 @@ public class OfferService {
         StocksEntity stock = findByStockCode(offerReqDto.getStockCode());
         log.info("stock info = {}, {}, {}", stock.getStockCode(), stock.getCountry(), stock.getDescription(), stock.getName());
 
-        // dto 주문 객체 생성
+        // dto 주문 객체 생성s
         OfferOrderDto offerOrderDto =
                 OfferOrderDto.builder()
                         .acctNo(account.getAcctNo())
