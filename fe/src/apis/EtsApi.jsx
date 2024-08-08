@@ -1,11 +1,12 @@
-import { estInstance } from "./BaseApi";
+import { etsInstance } from "./BaseApi";
 
-export async function fetchProductList(domestic, productType)  { // domestic - 0: 국내, 1: 해외    productType - CERs ETF ETN FUTURE (배출권 ETF, ETN, 선물)
+export async function fetchProductList(domestic, productType) {
+  // domestic - 0: 국내, 1: 해외    productType - CERs ETF ETN FUTURE (배출권 ETF, ETN, 선물)
   try {
-      const response = await estInstance.get(`/${domestic}/${productType}`)
-      return response.data; 
+    const response = await etsInstance.get(`/${domestic}/${productType}`);
+    return response.data;
   } catch (error) {
-      console.error("Error fetching data:", error);
-      throw error; 
+    console.error("Error fetching data:", error);
+    throw error;
   }
 }
