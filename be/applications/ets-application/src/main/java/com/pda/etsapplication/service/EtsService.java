@@ -1,21 +1,28 @@
 package com.pda.etsapplication.service;
 
+import com.pda.etsapplication.api.WebClientAPI;
 import com.pda.etsapplication.controller.dto.res.StocksDto;
 import com.pda.etsapplication.dto.HoldingDto;
+import com.pda.etsapplication.dto.MyCurrentDto;
 import com.pda.etsapplication.dto.PriceDto;
 import com.pda.etsapplication.repository.DescriptionEntity;
 import com.pda.etsapplication.repository.DescriptionRepository;
 import com.pda.etsapplication.repository.NewsEntity;
 import com.pda.etsapplication.repository.NewsRepository;
+import com.pda.etsapplication.repository.Offer;
+import com.pda.etsapplication.repository.OfferRepository;
 import com.pda.etsapplication.repository.PricesEntity;
 import com.pda.etsapplication.repository.PricesRepository;
 import com.pda.etsapplication.repository.StocksEntity;
 import com.pda.etsapplication.repository.StocksRepository;
 import com.pda.exceptionutil.exceptions.CommonException;
+import com.pda.jwtutil.auth.AuthUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +37,8 @@ public class EtsService {
     private final PricesRepository pricesRepository;
     private final NewsRepository newsRepository;
     private final DescriptionRepository descriptionRepository;
+    private final OfferRepository offerRepository;
+    private final WebClientAPI webClientAPI;
 
     public List<StocksDto> getStocksByCountryAndSector(Integer country, String sector) {
         List<StocksEntity> stocks = stocksRepository.findByCountryAndSector(country, sector);
@@ -148,5 +157,41 @@ public class EtsService {
     public DescriptionEntity getDescription(String stockCode) {
         return descriptionRepository.findByStockCode(stockCode)
             .orElseThrow(() -> CommonException.create("해당 상품 설명이 아직 없음"));
+    }
+
+    public MyCurrentDto getMyCurrent(AuthUser authUser) {
+        List<Offer> offers = offerRepository.findAllByStatusAndOfferDateStartsWithAndId("COMPLETED", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMM")), authUser.getId());
+        Double offerAmount = 0D;
+        // 0 : 한국, 1 : 유럽, 2 : 중국, 3 : 미국
+        for (Offer offer : offers) {
+            if (offer.getStocks().getCountry().equals(0)) {
+                offerAmount += offer.getPrice();
+            } else if (offer.getStocks().getCountry().equals(1)) {
+                offerAmount += offer.getPrice()*1500d;
+            } else if (offer.getStocks().getCountry().equals(2)) {
+                offerAmount += offer.getPrice()*200d;
+            } else if (offer.getStocks().getCountry().equals(3)) {
+                offerAmount += offer.getPrice()*1300d;
+            }
+        }
+
+        Double stockAmount = 0D;
+        List<HoldingDto> holdings = webClientAPI.getHoldings(authUser.getToken());
+        for(HoldingDto holding: holdings) {
+            PricesEntity price = pricesRepository.findByStockCodeByCurrent(holding.getStockCode());
+            if (holding.getCountry().equals(0)) {
+                stockAmount += price.getClose()*holding.getQuantity();
+            } else if (holding.getCountry().equals(1)) {
+                stockAmount += price.getClose()*holding.getQuantity()*1500d;
+            } else if (holding.getCountry().equals(2)) {
+                stockAmount += price.getClose()*holding.getQuantity()*200d;
+            } else if (holding.getCountry().equals(3)) {
+                stockAmount += price.getClose()*holding.getQuantity()*1300d;
+            }
+        }
+        return MyCurrentDto.builder()
+            .offerAmount(offerAmount.longValue())
+            .stockAmount(stockAmount.longValue())
+            .build();
     }
 }
