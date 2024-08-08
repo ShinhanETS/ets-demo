@@ -93,7 +93,7 @@ public class HoldingService {
 
         // FIXME: 일단 totalPrice를 어디에서 쓰는지...
         if (putHoldingDto.getCountry().equals(0)) {
-            account.setWon(account.getWon()+totalPrice);
+            account.setWon(putHoldingDto.isMinus()?account.getWon()-totalPrice:account.getWon()+totalPrice);
             accountRepository.save(account);
             Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
@@ -119,7 +119,7 @@ public class HoldingService {
                 holdingRepository.save(holding);
             }
         } else if (putHoldingDto.getCountry().equals(1)) {
-            account.setEuro(account.getEuro()+totalPrice);
+            account.setEuro(putHoldingDto.isMinus()?account.getEuro()-totalPrice:account.getEuro()+totalPrice);
             accountRepository.save(account);
 
             Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
@@ -145,7 +145,7 @@ public class HoldingService {
                 holdingRepository.save(holding);
             }
         } else if (putHoldingDto.getCountry().equals(2)) {
-            account.setYuan(account.getYuan()+totalPrice);
+            account.setYuan(putHoldingDto.isMinus()?account.getYuan()-totalPrice:account.getYuan()+totalPrice);
             accountRepository.save(account);
             Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
@@ -170,7 +170,7 @@ public class HoldingService {
                 holdingRepository.save(holding);
             }
         } else if (putHoldingDto.getCountry().equals(3)) {
-            account.setDollar(account.getDollar()+totalPrice);
+            account.setDollar(putHoldingDto.isMinus()?account.getDollar()-totalPrice:account.getDollar()+totalPrice);
             accountRepository.save(account);
             Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
