@@ -72,7 +72,7 @@ export default function Layout() {
                 alt="Grade Icon"
               />
             </div>
-            <p>{totalBudget}원</p>
+            <p>{totalBudget.toLocaleString()}원</p>
           </div>
         )}
 
@@ -119,7 +119,7 @@ export default function Layout() {
                   <p className="text-sm text-gray-500 font-medium">
                     당월 거래량
                   </p>
-                  <p className="text-lg font-bold">{totalProduct?.offerAmount}원</p>
+                  <p className="text-lg font-bold">{totalProduct?.offerAmount?.toLocaleString()}원</p>
                 </div>
                 <div className="max-w-[3px] w-[0.5%] h-[60%] bg-[#D9D9D9]"></div>
                 <div className="w-[49%] flex flex-col items-center">
@@ -134,7 +134,7 @@ export default function Layout() {
               <h3 className="w-full text-md font-semibold mb-4">
                 받을 수 있는 혜택
               </h3>
-              <div className="w-full flex flex-col gap-6 pl-3 overflow-y-auto">
+              <div className="w-full flex flex-col gap-8 pl-3 overflow-y-auto">
                 {benefits.map((benefit, index) => (
                   <div className="flex gap-4" key={index}>
                     <img

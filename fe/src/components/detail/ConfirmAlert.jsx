@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function ConfirmAlert({
   isOpen,
@@ -6,6 +7,8 @@ export default function ConfirmAlert({
   message,
   isSuccess,
   isSell,
+  setValue,
+  setAmount,
 }) {
   useEffect(() => {
     if (isOpen) {
@@ -20,7 +23,13 @@ export default function ConfirmAlert({
   }, [isOpen]);
 
   const onClose = () => {
-    setIsOpen(false);
+    if (isSuccess) {
+      window.location.reload();
+    } else {
+      setIsOpen(false);
+      setValue(0);
+      setAmount(0);
+    }
   };
 
   return (

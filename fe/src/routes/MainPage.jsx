@@ -3,8 +3,8 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
 import { bottomState, productState } from "../recoil/state";
 import MainBanner from "../assets/MainBanner.svg";
-import ComingSoon from '../assets/ComingSoon.gif';
-import Please from '../assets/Please.gif';
+import ComingSoon from "../assets/ComingSoon.gif";
+import Please from "../assets/Please.gif";
 import Korea from "../assets/Korea.webp";
 import USA from "../assets/USA.png";
 import Europe from "../assets/Europe.png";
@@ -13,7 +13,7 @@ import MainButton from "../components/main/MainButton";
 import MainModal from "../components/main/MainModal";
 import { fetchProductList } from "../apis/EtsApi";
 import { UserContext } from "../components/common/Layout";
-import imageMapping from '../components/main/RenderImage';
+import imageMapping from "../components/main/RenderImage";
 import { fetchMyAccount, fetchMyProduct } from "../apis/AccountApi";
 
 export const tabNumberToURL = {
@@ -60,10 +60,13 @@ export default function MainPage() {
     const fetchProducts = async () => {
       if (selectedTab !== 2) {
         try {
-          const response = await fetchProductList(selectedTab, tabNumberToURL[selectedButton]);
+          const response = await fetchProductList(
+            selectedTab,
+            tabNumberToURL[selectedButton]
+          );
           if (response.success) {
             const processedData = response.data.map((product) => {
-              const chgValue = parseFloat(product.chg?.replace('%', ''));
+              const chgValue = parseFloat(product.chg?.replace("%", ""));
               if (chgValue > 0) {
                 product.chg = `+${product.chg}`;
               }
@@ -80,15 +83,15 @@ export default function MainPage() {
             fetchMyAccount(),
             fetchMyProduct(selectedButton),
           ]);
-          setAccount(account.data)
+          setAccount(account.data);
           const processedData = myProducts.data.map((product) => {
-            const chgValue = parseFloat(product.chg?.replace('%', ''));
+            const chgValue = parseFloat(product.chg?.replace("%", ""));
             if (chgValue > 0) {
               product.chg = `+${product.chg}`;
             }
             return product;
           });
-          setProductList(processedData)
+          setProductList(processedData);
         } catch (error) {
           console.error("Error fetching account data:", error);
         }
@@ -100,6 +103,7 @@ export default function MainPage() {
 
   // Product 클릭 시 상세 페이지로 이동
   const handleProductClick = (product) => {
+    console.log(product);
     setProduct(product); // 클릭한 product를 Recoil state에 설정
     navigate(`/detail/${product.stockCode}`); // 상세 페이지로 이동
   };
@@ -107,11 +111,11 @@ export default function MainPage() {
   return (
     <div className="flex flex-col h-screen bg-white relative select-none">
       <div className="min-h-[20vh] bg-gradient-to-b from-[#0937BC] to-[#2D09BC] flex">
-        <div className="mt-[4vh] ml-[6vw] flex text-2xl font-semibold items-start">
+        <div className="mt-[4vh] ml-[6vw] flex text-xl font-semibold items-start">
           {["국내", "해외", "MY거래"].map((text, index) => (
             <div
               key={index}
-              className={`mx-2.5 my-2 cursor-pointer ${
+              className={`mx-2.5 my-3 cursor-pointer ${
                 selectedTab === index
                   ? "text-white text-white-1 border-b-[0.2rem]"
                   : "text-[#FFFFFF] opacity-60"
@@ -158,9 +162,7 @@ export default function MainPage() {
                   <img src={USA} alt="" className="w-6 h-6" />
                   <div>USD</div>
                 </div>
-                <div className="font-bold">
-                  {account?.dollar?.toFixed(1)}
-                </div>
+                <div className="font-bold">{account?.dollar?.toFixed(1)}</div>
               </div>
               <div className="max-w-[3px] w-[0.5%] h-full bg-[#c0c0c0]"></div>
               <div className="flex flex-col items-center">
@@ -168,9 +170,7 @@ export default function MainPage() {
                   <img src={Europe} alt="" className="w-5 h-5" />
                   <div>EUR</div>
                 </div>
-                <div className="font-bold">
-                  {account?.euro?.toFixed(1)}
-                </div>
+                <div className="font-bold">{account?.euro?.toFixed(1)}</div>
               </div>
               <div className="max-w-[3px] w-[0.5%] h-full bg-[#c0c0c0]"></div>
               <div className="flex flex-col items-center">
@@ -178,9 +178,7 @@ export default function MainPage() {
                   <img src={China} alt="" className="w-5 h-5" />
                   <div>CNY</div>
                 </div>
-                <div className="font-bold">
-                  {account?.yuan?.toFixed(1)}
-                </div>
+                <div className="font-bold">{account?.yuan?.toFixed(1)}</div>
               </div>
             </div>
           </div>
@@ -219,19 +217,21 @@ export default function MainPage() {
                 alt="No Products"
                 className="w-32 h-32 mb-4"
               />
-              <p className="text-lg font-semibold text-gray-500">상품이 없어요</p>
+              <p className="text-lg font-semibold text-gray-500">
+                상품이 없어요
+              </p>
             </div>
           ) : (
             productList?.map((product, index) => {
-              const chgValue = parseFloat(product.chg?.replace('%', ''));
-              let chgClass = '';
+              const chgValue = parseFloat(product.chg?.replace("%", ""));
+              let chgClass = "";
 
               if (chgValue === 0.0) {
-                chgClass = 'text-black-1';
+                chgClass = "text-black-1";
               } else if (chgValue > 0) {
-                chgClass = 'text-red-1';
+                chgClass = "text-red-1";
               } else if (chgValue < 0) {
-                chgClass = 'text-blue-1';
+                chgClass = "text-blue-1";
               }
 
               return (
@@ -248,13 +248,19 @@ export default function MainPage() {
                     />
                     <div className="flex flex-col gap-1 justify-between">
                       <h3 className="font-semibold">{product.name}</h3>
-                      <p className="text-[#666666] font-medium text-sm">({product.description})</p>
+                      <p className="text-[#666666] font-medium text-sm">
+                        {product.description}
+                      </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className={`text-lg font-semibold ${chgClass}`}>{product.chg}</p>
-                    <p className="font-medium text-black-1 text-nowrap">
-                      {product.close}
+                    <p className={`text-lg font-semibold ${chgClass}`}>
+                      {product.chg}
+                    </p>
+                    <p className="text-[1rem] text-black-1 text-nowrap">
+                      {product.currencySymbol === "원"
+                        ? product.close.toLocaleString()
+                        : product.close}
                       {product.currencySymbol}
                     </p>
                   </div>
@@ -265,7 +271,9 @@ export default function MainPage() {
         </div>
       </div>
       <div className="flex justify-center items-center mt-20">
-        {showModal && <MainModal modalOpen={showModal} setModalOpen={setShowModal} />}
+        {showModal && (
+          <MainModal modalOpen={showModal} setModalOpen={setShowModal} />
+        )}
       </div>
     </div>
   );

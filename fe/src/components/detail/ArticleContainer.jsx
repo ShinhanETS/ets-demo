@@ -32,7 +32,7 @@ export default function ArticleContainer() {
       {isLoading ? (
         <Loading />
       ) : (
-        <div className="h-[calc(100vh_-_244px)] flex flex-col gap-8 bg-white-1 px-[1.5rem] pt-[0.8rem] pb-[4rem] overflow-scroll">
+        <div className="h-[calc(100vh_-_264px)] flex flex-col gap-8 bg-white-1 px-[1.5rem] pt-[0.8rem] pb-[4rem] overflow-scroll">
           {articles.map((article, idx) => (
             <div
               key={idx}

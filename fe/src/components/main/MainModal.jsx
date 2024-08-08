@@ -28,7 +28,7 @@ export default function MainModal({ modalOpen, setModalOpen }) {
         }}>
         <Modal.Body className="bg-white-1 rounded-2xl p-0 flex flex-col mx-4">
           <div className="px-2 pt-2">
-            <div className="flex justify-between">
+            <div className="flex justify-between pb-4">
               <div className="text-sm font-light underline text-[#6A6A6A] cursor-pointer" onClick={handleDontShowAgain}>
                 다시보지 않기
               </div>
@@ -36,7 +36,7 @@ export default function MainModal({ modalOpen, setModalOpen }) {
                 <img src={X} alt="" />
               </div>
             </div>
-            <div className="w-full h-[36vh] px-6">
+            <div className="w-full h-[32vh] px-6">
               <div>
                 <img src={MainModalBanner} alt="" />
               </div>
