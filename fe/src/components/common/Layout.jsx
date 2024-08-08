@@ -50,7 +50,7 @@ export default function Layout() {
                 <p className="text-lg font-medium">현재 <span className='font-extrabold'>{membershipData?.username}</span>님의 등급은</p>
                 <p className="text-center text-lg font-extrabold mb-4">{membershipData?.grade}</p>
               </div>
-              <div className="flex justify-between items-center w-full h-[18vh] mb-8 rounded-2xl" style={{ backgroundColor: 'rgba(9, 55, 188, 0.05)' }}>
+              <div className="flex justify-between items-center w-full h-[10vh] mb-8 rounded-2xl" style={{ backgroundColor: 'rgba(9, 55, 188, 0.05)' }}>
                 <div className='w-[49%] flex flex-col items-center'>
                   <p className="text-sm text-gray-500 font-medium">당월 거래량</p>
                   <p className="text-lg font-bold">{membershipData?.point}원</p>
