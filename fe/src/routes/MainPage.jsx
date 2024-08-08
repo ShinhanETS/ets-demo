@@ -14,6 +14,7 @@ import MainModal from "../components/main/MainModal";
 import { fetchProductList } from "../apis/EtsApi";
 import { UserContext } from "../components/common/Layout";
 import imageMapping from '../components/main/RenderImage';
+import { fetchMyAccount, fetchMyProduct } from "../apis/AccountApi";
 
 export const tabNumberToURL = {
   0: "CERs",
@@ -29,13 +30,14 @@ export default function MainPage() {
   const [productList, setProductList] = useState([]);
   const { username } = useContext(UserContext);
   const [isBottom, setIsBottom] = useRecoilState(bottomState);
+  const [account, setAccount] = useState({});
 
   const setProduct = useSetRecoilState(productState); // Recoil state 설정을 위한 함수
   const navigate = useNavigate(); // 페이지 이동을 위한 함수
 
   useEffect(() => {
     setIsBottom(true);
-  }, []);
+  }, [setIsBottom]);
 
   const handleButtonClick = (number) => {
     setSelectedButton(number);
@@ -55,25 +57,46 @@ export default function MainPage() {
 
   // 국가나 상품 변경될 때마다 종목들 새로고침
   useEffect(() => {
-    
-    if (selectedTab !== 2) {
-      const fetchProducts = async () => {
-        const response = await fetchProductList(selectedTab, tabNumberToURL[selectedButton]);
-        if (response.success) {
-          const processedData = response.data.map((product) => {
+    const fetchProducts = async () => {
+      if (selectedTab !== 2) {
+        try {
+          const response = await fetchProductList(selectedTab, tabNumberToURL[selectedButton]);
+          if (response.success) {
+            const processedData = response.data.map((product) => {
+              const chgValue = parseFloat(product.chg?.replace('%', ''));
+              if (chgValue > 0) {
+                product.chg = `+${product.chg}`;
+              }
+              return product;
+            });
+            setProductList(processedData);
+          }
+        } catch (error) {
+          console.error("Error fetching product list:", error);
+        }
+      } else {
+        try {
+          const [account, myProducts] = await Promise.all([
+            fetchMyAccount(),
+            fetchMyProduct(selectedButton),
+          ]);
+          setAccount(account.data)
+          const processedData = myProducts.data.map((product) => {
             const chgValue = parseFloat(product.chg?.replace('%', ''));
             if (chgValue > 0) {
               product.chg = `+${product.chg}`;
             }
             return product;
           });
-  
-          setProductList(processedData);
+          setProductList(processedData)
+        } catch (error) {
+          console.error("Error fetching account data:", error);
         }
-      };
-      fetchProducts();
-    }
-  }, [selectedTab, selectedButton]);
+      }
+    };
+
+    fetchProducts();
+  }, [selectedTab, selectedButton, setProductList]);
 
   // Product 클릭 시 상세 페이지로 이동
   const handleProductClick = (product) => {
@@ -119,13 +142,15 @@ export default function MainPage() {
             <div className="font-medium text-sm">
               현재 {username}님의 예수금
             </div>
-            <div className="flex w-full gap-1 justify-around">
+            <div className="flex w-full gap-1 justify-around text-center">
               <div className="flex flex-col items-center">
                 <div className="flex items-center gap-1 font-medium">
                   <img src={Korea} alt="" className="w-5 h-5" />
                   <div>KRW</div>
                 </div>
-                <div className="font-bold w-full break-words">130,400</div>
+                <div className="font-bold w-full break-words">
+                  {account?.won?.toLocaleString()}
+                </div>
               </div>
               <div className="max-w-[2px] w-[0.5%] h-full bg-[#c0c0c0]"></div>
               <div className="flex flex-col items-center">
@@ -133,7 +158,9 @@ export default function MainPage() {
                   <img src={USA} alt="" className="w-6 h-6" />
                   <div>USD</div>
                 </div>
-                <div className="font-bold">142.13</div>
+                <div className="font-bold">
+                  {account?.dollar?.toFixed(1)}
+                </div>
               </div>
               <div className="max-w-[3px] w-[0.5%] h-full bg-[#c0c0c0]"></div>
               <div className="flex flex-col items-center">
@@ -141,7 +168,9 @@ export default function MainPage() {
                   <img src={Europe} alt="" className="w-5 h-5" />
                   <div>EUR</div>
                 </div>
-                <div className="font-bold">14.53</div>
+                <div className="font-bold">
+                  {account?.euro?.toFixed(1)}
+                </div>
               </div>
               <div className="max-w-[3px] w-[0.5%] h-full bg-[#c0c0c0]"></div>
               <div className="flex flex-col items-center">
@@ -149,85 +178,95 @@ export default function MainPage() {
                   <img src={China} alt="" className="w-5 h-5" />
                   <div>CNY</div>
                 </div>
-                <div className="font-bold">654.5</div>
+                <div className="font-bold">
+                  {account?.yuan?.toFixed(1)}
+                </div>
               </div>
             </div>
           </div>
         )}
       </div>
 
-            <div className="p-5 flex-1">
-                <div className="flex gap-2 mt-[8vh]">
-                    <MainButton
-                        selected={selectedButton === 0}
-                        onClick={() => handleButtonClick(0)}
-                        text="배출권"
-                    />
-                    <MainButton
-                        selected={selectedButton === 1}
-                        onClick={() => handleButtonClick(1)}
-                        text="ETF"
-                    />
-                    <MainButton
-                        selected={selectedButton === 2}
-                        onClick={() => handleButtonClick(2)}
-                        text="ETN"
-                    />
-                    <MainButton
-                        selected={selectedButton === 3}
-                        onClick={() => handleButtonClick(3)}
-                        text="선물"
-                    />
-                </div>
-
-                <div className="space-y-2 mt-[3vh] overflow-y-auto h-[55vh]">
-                  {productList.length === 0? 
-                    (
-                      <div className="flex flex-col items-center justify-center mt-10">
-                          <img src={selectedTab===2?Please:ComingSoon} alt="No Products" className="w-32 h-32 mb-4" />
-                          <p className="text-lg font-semibold text-gray-500">상품이 없어요</p>
-                      </div>
-                    ) : 
-                    (
-                        productList?.map((product, index) => {
-                            const chgValue = parseFloat(product.chg?.replace('%', ''));
-                            let chgClass = '';
-
-                            if (chgValue === 0.0) {
-                                chgClass = 'text-black-1';
-                            } else if (chgValue > 0) {
-                                chgClass = 'text-red-1';
-                                
-                            } else if (chgValue < 0) {
-                                chgClass = 'text-blue-1';
-                            }
-
-                            return (
-                                <div 
-                                    key={index} 
-                                    className="flex justify-between items-center gap-[2vw] p-2 bg-white rounded-lg active:bg-grey-2 transition duration-200 cursor-pointer"
-                                    onClick={() => handleProductClick(product)}
-                                >
-                                    <div className='flex gap-4 items-center'>
-                                        <img src={imageMapping[product?.name]} alt="" className='rounded-full w-12 h-12' />
-                                        <div className='flex flex-col gap-1 justify-between'>
-                                            <h3 className="font-semibold">{product.name}</h3>
-                                            <p className="text-[#666666] font-medium text-sm">({product.description})</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className={`text-lg font-semibold ${chgClass}`}>{product.chg}</p>
-                                        <p className='font-medium text-black-1 text-nowrap'>{product.close}{product.currencySymbol}</p>
-                                    </div>
-                                </div>
-                            );
-                        })
-                    )}
-                </div>
-            </div>
-            <div className='flex justify-center items-center mt-20'>
-                {showModal && <MainModal modalOpen={showModal} setModalOpen={setShowModal} />}
-            </div>
+      <div className="p-5 flex-1">
+        <div className="flex gap-2 mt-[8vh]">
+          <MainButton
+            selected={selectedButton === 0}
+            onClick={() => handleButtonClick(0)}
+            text="배출권"
+          />
+          <MainButton
+            selected={selectedButton === 1}
+            onClick={() => handleButtonClick(1)}
+            text="ETF"
+          />
+          <MainButton
+            selected={selectedButton === 2}
+            onClick={() => handleButtonClick(2)}
+            text="ETN"
+          />
+          <MainButton
+            selected={selectedButton === 3}
+            onClick={() => handleButtonClick(3)}
+            text="선물"
+          />
         </div>
-    );
+
+        <div className="space-y-2 mt-[3vh] overflow-y-auto h-[55vh] custom-scrollbar">
+          {productList.length === 0 ? (
+            <div className="flex flex-col items-center justify-center mt-10">
+              <img
+                src={selectedTab === 2 ? Please : ComingSoon}
+                alt="No Products"
+                className="w-32 h-32 mb-4"
+              />
+              <p className="text-lg font-semibold text-gray-500">상품이 없어요</p>
+            </div>
+          ) : (
+            productList?.map((product, index) => {
+              const chgValue = parseFloat(product.chg?.replace('%', ''));
+              let chgClass = '';
+
+              if (chgValue === 0.0) {
+                chgClass = 'text-black-1';
+              } else if (chgValue > 0) {
+                chgClass = 'text-red-1';
+              } else if (chgValue < 0) {
+                chgClass = 'text-blue-1';
+              }
+
+              return (
+                <div
+                  key={index}
+                  className="flex justify-between items-center gap-[2vw] p-2 bg-white rounded-lg active:bg-grey-2 transition duration-200 cursor-pointer"
+                  onClick={() => handleProductClick(product)}
+                >
+                  <div className="flex gap-4 items-center">
+                    <img
+                      src={imageMapping[product?.name]}
+                      alt=""
+                      className="rounded-full w-12 h-12"
+                    />
+                    <div className="flex flex-col gap-1 justify-between">
+                      <h3 className="font-semibold">{product.name}</h3>
+                      <p className="text-[#666666] font-medium text-sm">({product.description})</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-lg font-semibold ${chgClass}`}>{product.chg}</p>
+                    <p className="font-medium text-black-1 text-nowrap">
+                      {product.close}
+                      {product.currencySymbol}
+                    </p>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+      <div className="flex justify-center items-center mt-20">
+        {showModal && <MainModal modalOpen={showModal} setModalOpen={setShowModal} />}
+      </div>
+    </div>
+  );
 }

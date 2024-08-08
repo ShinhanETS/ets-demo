@@ -5,28 +5,52 @@ import CheckLogin from "../../hooks/CheckLogin";
 import { fetchMembership } from "../../apis/MembershipApi";
 import { bottomState } from "../../recoil/state";
 import { useRecoilValue } from "recoil";
+import MembershipGauge from "../main/MembershipGauge"; // MembershipGauge 컴포넌트 임포트
+import { fetchMyBudget } from "../../apis/AccountApi";
+import { fetchMyProductTotal } from "../../apis/EtsApi";
 
 export const UserContext = createContext(null);
+export const getLevel = (point) => {
+  if (point < 100) return 1;
+  if (point < 200) return 2;
+  if (point < 300) return 3;
+  return 4;
+};
 
 export default function Layout() {
   const [isOpen, setOpen] = useState(false);
   const [membershipData, setMembershipData] = useState({});
+  const [totalProduct, setTotalProduct] = useState({});
+  const [totalBudget, setTotalBudget] = useState(0)
   const isBottom = useRecoilValue(bottomState);
 
   CheckLogin();
 
   useEffect(() => {
     const fetchData = async () => {
-      const membershipApiData = await fetchMembership();
-      setMembershipData(membershipApiData.data);
+      try {
+        // 두 API 호출을 병렬로 수행
+        const [membershipApiData, budgetResponse, productTotalResponse] = await Promise.all([
+          fetchMembership(),
+          fetchMyBudget(),
+          fetchMyProductTotal(),
+        ]);
+        
+        // 각각의 응답 데이터로 상태 업데이트
+        setMembershipData(membershipApiData.data);
+        setTotalBudget(budgetResponse.data);
+        setTotalProduct(productTotalResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
 
     fetchData();
-  }, [isBottom, isOpen]); // 형상 변화가 있을때마다 새로고침
+  }, [isBottom, isOpen]);
 
-  // API 응답에서 benefits, username을 가져옴
   const benefits = membershipData?.benefits || [];
   const username = membershipData?.username || "";
+  const { point, minPoint, maxPoint } = membershipData;
 
   return (
     <UserContext.Provider value={{ username }}>
@@ -37,7 +61,7 @@ export default function Layout() {
 
         {isBottom && (
           <div
-            className="flex items-center justify-between font-semibold fixed bottom-0 left-0 right-0 h-[7vh] bg-[#EAEDF5] shadow-lg px-6 cursor-pointer rounded-t-2xl"
+            className="flex items-center justify-between font-semibold fixed bottom-0 left-0 right-0 h-[7vh] bg-[#EAEDF5] shadow-lg px-6 cursor-pointer rounded-t-2xl select-none"
             onClick={() => setOpen(true)}
           >
             <div className="flex gap-3 items-center">
@@ -48,7 +72,7 @@ export default function Layout() {
                 alt="Grade Icon"
               />
             </div>
-            <p>{membershipData?.maxPoint}원</p>
+            <p>{totalBudget}원</p>
           </div>
         )}
 
@@ -76,9 +100,15 @@ export default function Layout() {
                   님의 등급은
                 </p>
                 <p className="text-center text-lg font-extrabold mb-4">
-                  {membershipData?.grade}
+                  Lv{getLevel(membershipData?.point)}{" "}{membershipData?.grade}
                 </p>
               </div>
+              <MembershipGauge 
+                point={point} 
+                minPoint={minPoint} 
+                maxPoint={maxPoint} 
+              />
+              <div className="h-[2vh]"></div>
               <div
                 className="flex justify-between items-center w-full h-[10vh] mb-8 rounded-2xl"
                 style={{
@@ -89,7 +119,7 @@ export default function Layout() {
                   <p className="text-sm text-gray-500 font-medium">
                     당월 거래량
                   </p>
-                  <p className="text-lg font-bold">{membershipData?.point}원</p>
+                  <p className="text-lg font-bold">{totalProduct?.offerAmount}원</p>
                 </div>
                 <div className="max-w-[3px] w-[0.5%] h-[60%] bg-[#D9D9D9]"></div>
                 <div className="w-[49%] flex flex-col items-center">
@@ -97,7 +127,7 @@ export default function Layout() {
                     보유 평가액
                   </p>
                   <p className="text-lg font-bold">
-                    {membershipData?.maxPoint}원
+                    {totalProduct?.stockAmount}원
                   </p>
                 </div>
               </div>
