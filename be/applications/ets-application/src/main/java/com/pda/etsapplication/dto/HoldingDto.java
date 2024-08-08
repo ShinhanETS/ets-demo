@@ -1,15 +1,13 @@
-package com.pda.accountapplication.dto;
+package com.pda.etsapplication.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Setter
 public class HoldingDto {
 
     @JsonProperty("stock_code")

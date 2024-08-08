@@ -12,4 +12,6 @@ public interface StocksRepository extends JpaRepository<StocksEntity, String> {
 
     Optional<StocksEntity> findByStockCode(String stockCode);
     boolean existsByStockCode(String stockCode);
+
+    List<StocksEntity> findByStockCodeIn(List<String> stockCodes);
 }
