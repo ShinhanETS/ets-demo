@@ -1,3 +1,5 @@
 .idea
 kafka-compose.yml
 deploy-compose.yml
+/conf/grafana-deploy.ini
+/conf/prometheus-deploy.yml
