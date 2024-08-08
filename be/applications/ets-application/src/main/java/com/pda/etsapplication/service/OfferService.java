@@ -100,7 +100,7 @@ public class OfferService {
 
     }
 
-    public String placeSellOrder(OfferReqDto offerReqDto, Long id){
+    public OfferTradeResDto placeSellOrder(OfferReqDto offerReqDto, Long id){
         // 0. 요청 들어옴(주문번호 생성, 주문날짜 생성)
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss"));
         String offerNum = generateNumber("Ofr", date, offerReqDto.getStockCode(), id);
@@ -114,16 +114,19 @@ public class OfferService {
         StocksEntity stock = findByStockCode(offerReqDto.getStockCode());
         log.info("stock info = {}, {}, {}", stock.getStockCode(), stock.getCountry(), stock.getDescription(), stock.getName());
 
-        // 3. 잔고 확인(부족하면 주문상태 failed 처리 후 return) + 주문 상태 처리(PENDING / FAILED)
-        if(!checkBalance(stock,account,offerReqDto)){
-            log.info("잔고가 부족하여 failed 처리");
-            createOffer(id, date.substring(0, 9), offerNum, stock, account, offerReqDto, "buy","FAILED");
-            return null;
-        }else{
-            log.info("잔고 충분하여 주문 처리");
-            createOffer(id, date.substring(0, 9), offerNum, stock, account, offerReqDto,"buy","PENDING");
+        // dto 주문 객체 생성
+        OfferOrderDto offerOrderDto =
+                OfferOrderDto.builder()
+                        .acctNo(account.getAcctNo())
+                        .stockCode(stock.getStockCode())
+                        .offerQuantity(offerReqDto.getQuantity())
+                        .offerDate(date.substring(0, 9))
+                        .type("sell")
+                        .offerNo(offerNum)
+                        .build();
 
-        }
+        // 3. 주문 처리(PENDING)
+        createOffer(id, date.substring(0, 9), offerNum, stock, account, offerReqDto,"sell","PENDING");
 
         // 4. 체결 정보 저장
         String tradeNum = generateNumber("Trd", date, offerReqDto.getStockCode(), id);
@@ -135,8 +138,18 @@ public class OfferService {
         // 6. 주문 상태 업데이트
         updateOffer(offerNum, offerReqDto.getQuantity());
 
+        offerOrderDto.setStatus("COMPLETED");
+        OfferTradeDto offerTradeDto = OfferTradeDto.builder()
+                .tradeNo(tradeNum)
+                .tradeQuantity(offerReqDto.getQuantity())
+                .notTradeQuantity(0)
+                .tradePrice(offerReqDto.getPrice() * offerReqDto.getQuantity())
+                .build();
+
         // 7. 체결 정보, 주문 정보 return
-        return "성공이욤";
+        return OfferTradeResDto.builder()
+                .order(offerOrderDto)
+                .trade(offerTradeDto).build();
     }
 
     // 주문번호 / 체결번호 생성

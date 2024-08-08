@@ -1,7 +1,7 @@
 INSERT INTO stocks(stock_code, market, name, description, country, sector, currency) VALUES
                             ('KAU23', 'KRX ETS', 'KAU23', '한국 탄소 배출권(2023년 만기)', 0, 'CERs', '원'),
                             ('KAU24', 'KRX ETS', 'KAU24', '한국 탄소 배출권(2024년 만기)', 0, 'CERs', '원'),
-                            ('KAU25', 'KRX ETS', 'KAU25', '한국 탄소 배출권(2025년)', 0, 'CERs', '원'),
+                            ('KAU25', 'KRX ETS', 'KAU25', '한국 탄소 배출권(2025년 만기)', 0, 'CERs', '원'),
                             ('EUA', 'EU ETS', 'EUA', '유럽 탄소 배출권', 1, 'CERs', '유로'),
                             ('CKQ24', 'ICE Endex', 'CKQ24', '유럽 탄소 배출권 선물', 1, 'FUTURE', '유로'),
                             ('CKU24', 'ICE Endex', 'CKU24', '유럽 탄소 배출권 선물', 1, 'FUTURE', '유로'),

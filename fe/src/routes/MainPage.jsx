@@ -6,7 +6,7 @@ import Europe from "../assets/Europe.png";
 import China from "../assets/China.png";
 import MainButton from "../components/main/MainButton";
 import MainModal from "../components/main/MainModal";
-import { fetchMembership } from "../apis/MembershipApi";
+import { fetchProductList } from "../apis/EtsApi";
 import { useRecoilState } from "recoil";
 import { bottomState } from "../recoil/state";
 
@@ -15,6 +15,7 @@ export default function MainPage() {
   const [selectedButton, setSelectedButton] = useState(0);
   const [showModal, setShowModal] = useState(true);
   const [isBotton, setIsBottom] = useRecoilState(bottomState);
+  const [productList, setProductList] = useState([]);
 
   useEffect(() => {
     setIsBottom(true);
@@ -34,6 +35,24 @@ export default function MainPage() {
       setShowModal(false);
     }
   }, []);
+
+  // 모달 오픈 여부 확인
+  useEffect(() => {
+    const modalStatus = localStorage.getItem("modalOpen");
+    if (modalStatus === "false") {
+      setShowModal(false);
+    }
+  }, []);
+
+  // 탭이 변경될때마다 종목들 새로고침
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const productListResponse = await fetchProductList(0, "CERs");
+      setProductList(productListResponse);
+      console.log(productListResponse);
+    };
+    fetchProducts();
+  }, [selectedTab]);
 
   return (
     <div className="flex flex-col h-screen bg-white relative select-none">
@@ -145,7 +164,7 @@ export default function MainPage() {
                 <img
                   src="https://file.alphasquare.co.kr/media/images/stock_logo/kr/005930.png"
                   alt=""
-                  className="rounded-full w-12"
+                  className="rounded-full w-12 h-12"
                 />
                 <div className="flex flex-col gap-1 justify-between">
                   <h3 className="font-semibold">STHP</h3>

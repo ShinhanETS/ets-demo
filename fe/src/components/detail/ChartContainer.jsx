@@ -20,25 +20,39 @@ import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { chartState } from "../../recoil/state";
 import { initialData } from "./data";
+import { getCharts } from "../../apis/DetailApi";
+import Loading from "./Loading";
 
 export default function ChartContainer({ nowPrice }) {
-  // const chartData = useRecoilValue(chartState);
-  const chartData = initialData;
+  const [isLoading, setIsLoading] = useState(true);
+  const [chartData, setChartData] = useState([]);
 
-  // const ScaleProvider =
-  //   discontinuousTimeScaleProviderBuilder().inputDateAccessor((d) => {
-  //     const year = d?.date?.substr(0, 4);
-  //     const month = d?.date?.substr(4, 2);
-  //     const day = d?.date?.substr(6, 2);
-  //     const nDate = `${year}-${month}-${day}`;
-  //     return new Date(nDate);
-  //   });
+  useEffect(() => {
+    const stockCode = "520043";
+    const getChart = async () => {
+      try {
+        const response = await getCharts(stockCode);
+        console.log(response.data.length);
+        setChartData(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        return;
+      }
+    };
+
+    getChart();
+  }, []);
+
   const ScaleProvider =
-    discontinuousTimeScaleProviderBuilder().inputDateAccessor(
-      (d) => new Date(d.date)
-    );
+    discontinuousTimeScaleProviderBuilder().inputDateAccessor((d) => {
+      const year = d?.priceDate?.substr(0, 4);
+      const month = d?.priceDate?.substr(4, 2);
+      const day = d?.priceDate?.substr(6, 2);
+      const nDate = `${year}-${month}-${day}`;
+      return new Date(nDate);
+    });
 
-  const height = window.innerHeight - 227;
+  const height = window.innerHeight - 231;
   const width = window.innerWidth;
   const margin = { left: 0, right: 48, top: 0, bottom: 24 };
 
@@ -49,8 +63,8 @@ export default function ChartContainer({ nowPrice }) {
   const volumeDisplayFormat = format("~s");
 
   const start = xAccessor(data[data.length - 1]);
-  const end = xAccessor(data[data.length - 31]);
-  const xExtents = [start, data.length < 31 ? xAccessor(data[0]) : end];
+  const end = xAccessor(data[data.length - 61]);
+  const xExtents = [start, data.length < 61 ? xAccessor(data[0]) : end];
 
   const gridHeight = height - margin.top - margin.bottom;
 
@@ -127,105 +141,111 @@ export default function ChartContainer({ nowPrice }) {
     };
   }
 
-  return chartData?.length > 0 ? (
-    <div className="bg-white-1">
-      <ChartCanvas
-        height={height}
-        ratio={3}
-        width={width}
-        margin={margin}
-        data={data}
-        displayXAccessor={displayXAccessor}
-        seriesName="Data"
-        xScale={xScale}
-        xAccessor={xAccessor}
-        xExtents={xExtents}
-        zoomAnchor={lastVisibleItemBasedZoomAnchor}
-      >
-        <Chart
-          id={1}
-          height={chartHeight}
-          yExtents={candleChartExtents}
-          padding={50}
-        >
-          <HoverTooltip
-            tooltip={{ content: tooltipContent() }}
-            fontSize={14}
-            toolTipStrokeStyle="#bababa"
-            toolTipFillStyle="#fff"
-            background={{
-              fillStyle: "rgba(0, 0, 0, 0.02)",
-              strokeStyle: "ShortDash2",
-            }}
-            yAccessor={(d) => d.volume}
-          />
-          <XAxis
-            showGridLines
-            showTickLabel={false}
-            tickStrokeStyle="#BABABA"
-            strokeStyle="#BABABA"
-          />
-          <YAxis
-            showGridLines
-            tickFormat={pricesDisplayFormat}
-            tickStrokeStyle="#BABABA"
-            strokeStyle="#BABABA"
-            tickLabelFill="#BABABA"
-          />
-          <CandlestickSeries
-            fill={openCloseColor}
-            wickStroke={openCloseColor}
-          />
-          <MouseCoordinateX displayFormat={timeDisplayFormat} />
-          <MouseCoordinateY
-            rectWidth={margin.right}
-            displayFormat={pricesDisplayFormat}
-          />
-          <EdgeIndicator
-            itemType="last"
-            rectWidth={margin.right}
-            fill={openCloseColor}
-            lineStroke={openCloseColor}
-            displayFormat={pricesDisplayFormat}
-            yAccessor={yEdgeIndicator}
-            fullWidth={true}
-          />
-        </Chart>
-        <Chart
-          id={2}
-          height={barChartHeight}
-          origin={barChartOrigin}
-          yExtents={barChartExtents}
-          padding={{ top: 40, bottom: 0 }}
-        >
-          <SingleValueTooltip
-            yLabel="거래량"
-            origin={[12, 20]}
-            yAccessor={(d) => d.volume}
-            yDisplayFormat={(vol) => vol.toLocaleString()}
-          />
-          <XAxis
-            showGridLines
-            tickStrokeStyle="#BABABA"
-            strokeStyle="#BABABA"
-            showTicks={true}
-            showTickLabel={true}
-          />
-          <YAxis
-            ticks={4}
-            tickFormat={volumeDisplayFormat}
-            tickLabelFill="#BABABA"
-            tickStrokeStyle="#BABABA"
-            strokeStyle="#BABABA"
-          />
-          <BarSeries fillStyle={volumeColor} yAccessor={volumeSeries} />
-        </Chart>
-        <CrossHairCursor />
-      </ChartCanvas>
-    </div>
-  ) : (
-    <div className="w-full h-[30vh] box-border flex justify-center items-center text-gray-dark">
-      차트 정보가 없습니다.
-    </div>
+  return (
+    <>
+      {isLoading ? (
+        <Loading />
+      ) : chartData?.length > 0 ? (
+        <div className="bg-white-1">
+          <ChartCanvas
+            height={height}
+            ratio={3}
+            width={width}
+            margin={margin}
+            data={data}
+            displayXAccessor={displayXAccessor}
+            seriesName="Data"
+            xScale={xScale}
+            xAccessor={xAccessor}
+            xExtents={xExtents}
+            zoomAnchor={lastVisibleItemBasedZoomAnchor}
+          >
+            <Chart
+              id={1}
+              height={chartHeight}
+              yExtents={candleChartExtents}
+              padding={50}
+            >
+              <HoverTooltip
+                tooltip={{ content: tooltipContent() }}
+                fontSize={14}
+                toolTipStrokeStyle="#bababa"
+                toolTipFillStyle="#fff"
+                background={{
+                  fillStyle: "rgba(0, 0, 0, 0.02)",
+                  strokeStyle: "ShortDash2",
+                }}
+                yAccessor={(d) => d.volume}
+              />
+              <XAxis
+                showGridLines
+                showTickLabel={false}
+                tickStrokeStyle="#BABABA"
+                strokeStyle="#BABABA"
+              />
+              <YAxis
+                showGridLines
+                tickFormat={pricesDisplayFormat}
+                tickStrokeStyle="#BABABA"
+                strokeStyle="#BABABA"
+                tickLabelFill="#BABABA"
+              />
+              <CandlestickSeries
+                fill={openCloseColor}
+                wickStroke={openCloseColor}
+              />
+              <MouseCoordinateX displayFormat={timeDisplayFormat} />
+              <MouseCoordinateY
+                rectWidth={margin.right}
+                displayFormat={pricesDisplayFormat}
+              />
+              <EdgeIndicator
+                itemType="last"
+                rectWidth={margin.right}
+                fill={openCloseColor}
+                lineStroke={openCloseColor}
+                displayFormat={pricesDisplayFormat}
+                yAccessor={yEdgeIndicator}
+                fullWidth={true}
+              />
+            </Chart>
+            <Chart
+              id={2}
+              height={barChartHeight}
+              origin={barChartOrigin}
+              yExtents={barChartExtents}
+              padding={{ top: 40, bottom: 0 }}
+            >
+              <SingleValueTooltip
+                yLabel="거래량"
+                origin={[12, 20]}
+                yAccessor={(d) => d.volume}
+                yDisplayFormat={(vol) => vol.toLocaleString()}
+              />
+              <XAxis
+                showGridLines
+                tickStrokeStyle="#BABABA"
+                strokeStyle="#BABABA"
+                showTicks={true}
+                showTickLabel={true}
+              />
+              <YAxis
+                ticks={4}
+                tickFormat={volumeDisplayFormat}
+                tickLabelFill="#BABABA"
+                tickStrokeStyle="#BABABA"
+                strokeStyle="#BABABA"
+              />
+              <BarSeries fillStyle={volumeColor} yAccessor={volumeSeries} />
+            </Chart>
+            <CrossHairCursor />
+          </ChartCanvas>
+        </div>
+      ) : (
+        <div className="w-full h-[30vh] box-border flex justify-center items-center text-gray-dark">
+          차트 정보가 없습니다.
+        </div>
+      )}
+    </>
   );
 }
