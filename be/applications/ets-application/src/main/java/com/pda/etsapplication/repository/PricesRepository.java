@@ -9,4 +9,8 @@ import java.util.List;
 public interface PricesRepository extends JpaRepository<PricesEntity, PricesId> {
     List<PricesEntity> findByStockCode(String stockCode);
     List<PricesEntity> findByStockCodeInAndPriceDate(List<String> stockCode, String pricesDate);
+
+    List<PricesEntity> findByStockCodeAndPriceDate(String stockCode, String priceDate);
+
+
 }

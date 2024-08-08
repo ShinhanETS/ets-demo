@@ -1,6 +1,10 @@
 package com.pda.etsapplication.service;
 
 import com.pda.etsapplication.controller.dto.res.StocksDto;
+import com.pda.etsapplication.dto.HoldingDto;
+import com.pda.etsapplication.dto.PriceDto;
+import com.pda.etsapplication.repository.DescriptionEntity;
+import com.pda.etsapplication.repository.DescriptionRepository;
 import com.pda.etsapplication.repository.NewsEntity;
 import com.pda.etsapplication.repository.NewsRepository;
 import com.pda.etsapplication.repository.PricesEntity;
@@ -13,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +29,7 @@ public class EtsService {
     private final StocksRepository stocksRepository;
     private final PricesRepository pricesRepository;
     private final NewsRepository newsRepository;
+    private final DescriptionRepository descriptionRepository;
 
     public List<StocksDto> getStocksByCountryAndSector(Integer country, String sector) {
         List<StocksEntity> stocks = stocksRepository.findByCountryAndSector(country, sector);
@@ -78,5 +85,68 @@ public class EtsService {
         Collections.shuffle(news);
 
         return news.subList(0, 20);
+    }
+
+
+    public List<HoldingDto> getHoldingList(List<HoldingDto> holdingDtoList) {
+        //String todayDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        String todayDate = "20240805";
+        List<String> stockCodes = holdingDtoList.stream()
+            .map(HoldingDto::getStockCode)
+            .collect(Collectors.toList());
+
+        List<StocksEntity> stocks = stocksRepository.findByStockCodeIn(stockCodes);
+
+        // 날짜에 맞는 가격 데이터
+        Map<String, PricesEntity> pricesMap = new HashMap<>();
+        for (String stockCode : stockCodes) {
+            List<PricesEntity> pricesEntities = pricesRepository.findByStockCodeAndPriceDate(stockCode, todayDate);
+            if (!pricesEntities.isEmpty()) {
+                pricesMap.put(stockCode, pricesEntities.get(0)); // 첫 번째 데이터만 사용
+            }
+        }
+
+        // dto 생성
+        for (HoldingDto holdingDto : holdingDtoList) {
+            PricesEntity priceEntity = pricesMap.get(holdingDto.getStockCode());
+            if (priceEntity != null) {
+                StocksEntity stockEntity = stocks.stream()
+                    .filter(stock -> stock.getStockCode().equals(holdingDto.getStockCode()))
+                    .findFirst()
+                    .orElse(null);
+
+                // currencySymbol 설정
+                String currencySymbol;
+                switch (holdingDto.getCountry()) {
+                    case 0:
+                        currencySymbol = "원";
+                        break;
+                    case 1:
+                        currencySymbol = "€";
+                        break;
+                    case 3:
+                        currencySymbol = "$";
+                        break;
+                    default:
+                        currencySymbol = ""; // 기본값 설정
+                }
+
+                PriceDto priceDto = PriceDto.builder()
+                    .name(stockEntity != null ? stockEntity.getName() : null)
+                    .description(stockEntity != null ? stockEntity.getDescription() : null)
+                    .chg(priceEntity.getChg())
+                    .close(priceEntity.getClose())
+                    .currencySymbol(currencySymbol)
+                    .build();
+
+                holdingDto.setCurrentPrice(priceDto);
+            }
+        }
+        return holdingDtoList;
+    }
+
+    public DescriptionEntity getDescription(String stockCode) {
+        return descriptionRepository.findByStockCode(stockCode)
+            .orElseThrow(() -> CommonException.create("해당 상품 설명이 아직 없음"));
     }
 }

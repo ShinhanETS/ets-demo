@@ -2,6 +2,7 @@ package com.pda.accountapplication.controller;
 
 import com.pda.accountapplication.dto.AccountDto;
 import com.pda.accountapplication.dto.HoldingDto;
+import com.pda.accountapplication.dto.SellQuantityDto;
 import com.pda.accountapplication.service.AccountService;
 import com.pda.accountapplication.service.HoldingService;
 import com.pda.apiutil.ApiUtil;
@@ -35,11 +36,18 @@ public class AccountController {
     }
 
     // 계좌 조회
-    @GetMapping("/")
+    @Authenticated
+    @GetMapping
     public GlobalResponse<AccountDto> getAccountByUserId(@AuthInfo AuthUser authUser){
         AccountDto accountDto = accountService.getAccountById(authUser.getId());
         System.out.println(accountDto);
         return ApiUtil.success("성공", accountDto);
+    }
+
+    @Authenticated
+    @GetMapping("/total")
+    public GlobalResponse<Long> getTotalWon(@AuthInfo AuthUser authUser){
+        return ApiUtil.success("계좌 총 금액 조회", accountService.getTotalWon(authUser.getId()));
     }
 
     // 계좌 조회
@@ -63,29 +71,46 @@ public class AccountController {
     // 보유 종목 조회(거래권)
     @GetMapping("/holdings/ets")
     public GlobalResponse<List<HoldingDto>> getETSHoldings(@AuthInfo AuthUser authUser){
-        List<HoldingDto> holdingDtoList = holdingService.getHoldingList(authUser.getId());
+        List<HoldingDto> holdingDtoList = holdingService.getHoldingListbyStockType(authUser.getId(), "ets");
         return ApiUtil.success("성공", holdingDtoList);
     }
 
     // 보유 종목 조회(선물)
     @GetMapping("/holdings/futures")
     public GlobalResponse<List<HoldingDto>> getFutureHoldings(@AuthInfo AuthUser authUser){
-        List<HoldingDto> holdingDtoList = holdingService.getHoldingList(authUser.getId());
+        List<HoldingDto> holdingDtoList = holdingService.getHoldingListbyStockType(authUser.getId(), "future");
         return ApiUtil.success("성공", holdingDtoList);
     }
 
     // 보유 종목 조회(ETN)
     @GetMapping("/holdings/etn")
     public GlobalResponse<List<HoldingDto>> getETNHoldings(@AuthInfo AuthUser authUser){
-        List<HoldingDto> holdingDtoList = holdingService.getHoldingList(authUser.getId());
+        List<HoldingDto> holdingDtoList = holdingService.getHoldingListbyStockType(authUser.getId(), "etn");
         return ApiUtil.success("성공", holdingDtoList);
     }
 
     // 보유 종목 조회(ETF)
     @GetMapping("/holdings/etf")
     public GlobalResponse<List<HoldingDto>> getETFHoldings(@AuthInfo AuthUser authUser){
-        List<HoldingDto> holdingDtoList = holdingService.getHoldingList(authUser.getId());
+        List<HoldingDto> holdingDtoList = holdingService.getHoldingListbyStockType(authUser.getId(), "etf");
         return ApiUtil.success("성공", holdingDtoList);
     }
+
+    // 보유 주식 매도 가능 수량 조회
+    @GetMapping("/stock/sell/{stock_code}")
+    public GlobalResponse<SellQuantityDto> getSellQuantity(@AuthInfo AuthUser authUser, @PathVariable("stock_code") String stockCode ){
+        SellQuantityDto sellQuantityDto = holdingService.getSellQuantity(authUser.getId(), stockCode);
+        return ApiUtil.success("성공", sellQuantityDto);
+    }
+
+
+    // 당월투자금액
+
+
+    // 보유주식총액
+
+
+    // 예수금 총액
+
 
 }
