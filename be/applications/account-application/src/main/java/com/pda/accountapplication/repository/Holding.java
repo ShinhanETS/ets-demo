@@ -28,8 +28,8 @@ public class Holding {
     @Column(name = "quantity")
     private Long quantity; // 수량
 
-    @Column(name = "current_price")
-    private Double currentPrice; // 현재가
+    @Column(name = "type")
+    private String type; // 종목유형
 
     @Column(name = "total_price")
     private Double totalPrice; // 총매수가격

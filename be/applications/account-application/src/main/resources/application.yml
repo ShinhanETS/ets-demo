@@ -1,3 +1,6 @@
+host:
+  ets-server: http://localhost:8082
+
 server:
   servlet:
     context-path: /api/accounts
