@@ -3,14 +3,15 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'Pretendard';
-  src: url('/fonts/Pretendard.ttf') format('truetype');
-  font-weight: 100 900;   /* 기본 굵기 설정. 100 ~ 900 까지 가능! */
+  font-family: "Pretendard";
+  src: url("/fonts/Pretendard.ttf") format("truetype");
+  font-weight: 100 900; /* 기본 굵기 설정. 100 ~ 900 까지 가능! */
   font-style: normal;
 }
 
 :root {
-  font-family: 'Pretendard', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Pretendard", Inter, system-ui, Avenir, Helvetica, Arial,
+    sans-serif;
   line-height: 1.5;
   color-scheme: light;
   color: rgb(0, 0, 0);
@@ -21,7 +22,6 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 
 a {
   font-weight: 500;
@@ -47,4 +47,61 @@ button {
   background-color: #6e7bb9;
   cursor: pointer;
   transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+/* 스크롤바 설정*/
+::-webkit-scrollbar {
+  width: 0px;
+}
+
+.tab {
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.tab-active {
+  color: black;
+  transform: scale(1.1);
+}
+
+.tab-inactive {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+#spinner {
+  margin: calc(50% - 25px) auto;
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(216, 211, 211, 0.3);
+  box-sizing: border-box;
+
+  border-top-color: rgb(68, 112, 233);
+
+  border-radius: 100%;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
 }
