@@ -27,4 +27,15 @@ public class AccountService {
                 .dollar(foundAccount.getDollar())
                 .build();
     }
+
+    public Long getTotalWon(Long id) {
+        Account foundAccount = accountRepository.findById(id)
+            .orElseThrow(() -> CommonException.create("해당 유저의 계좌가 존재하지 않습니다."));
+
+        Long won = foundAccount.getWon().longValue();
+        double foreign = foundAccount.getEuro() * 1500d;
+        foreign += foundAccount.getDollar() * 1300d;
+        foreign += foundAccount.getYuan() * 200d;
+        return won+Double.valueOf(foreign).longValue();
+    }
 }
