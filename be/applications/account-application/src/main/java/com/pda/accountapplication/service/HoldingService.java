@@ -115,7 +115,7 @@ public class HoldingService {
                 holdingRepository.save(holding);
             } else {
                 log.info("put holding 1-3");
-                holding.setQuantity(holding.getQuantity() + putHoldingDto.getQuantity());
+                holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
             }
         } else if (putHoldingDto.getCountry().equals(1)) {
@@ -141,7 +141,7 @@ public class HoldingService {
                 holdingRepository.save(holding);
             } else {
                 log.info("put holding 2-3");
-                holding.setQuantity(holding.getQuantity() + putHoldingDto.getQuantity());
+                holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
             }
         } else if (putHoldingDto.getCountry().equals(2)) {
@@ -166,7 +166,7 @@ public class HoldingService {
                 holdingRepository.save(holding);
             } else {
                 log.info("put holding 3-3");
-                holding.setQuantity(holding.getQuantity() + putHoldingDto.getQuantity());
+                holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
             }
         } else if (putHoldingDto.getCountry().equals(3)) {
@@ -188,7 +188,7 @@ public class HoldingService {
                 holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
             } else {
-                holding.setQuantity(holding.getQuantity() + putHoldingDto.getQuantity());
+                holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
             }
         }
