@@ -69,6 +69,7 @@ export default function MainPage() {
 
   // Product 클릭 시 상세 페이지로 이동
   const handleProductClick = (product) => {
+    console.log(product);
     setProduct(product); // 클릭한 product를 Recoil state에 설정
     navigate(`/detail/${product.name}`); // 상세 페이지로 이동
   };
@@ -189,7 +190,7 @@ export default function MainPage() {
               chgClass = "text-red-1";
             } else if (chgValue < 0) {
               chgClass = "text-blue-1";
-              product.chg = product.chg.substring(1); // '-' 제거
+              // product.chg = product.chg.substring(1); // '-' 제거
             }
             return (
               <div

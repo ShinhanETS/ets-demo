@@ -42,6 +42,7 @@ export default function BuySellContainer({
   useEffect(() => {
     setValue(0);
     setAmount(0);
+    setIsError(false);
   }, [tab]);
 
   const onChange = (e) => {
