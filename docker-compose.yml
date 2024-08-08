@@ -301,8 +301,6 @@ services:
         depends_on:
             nginx:
                 condition: service_started
-            alert-db:
-                condition: service_started
             spring-builder:
                 condition: service_completed_successfully
             kafka-ui:
