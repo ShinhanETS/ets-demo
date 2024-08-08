@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StocksDto {
+    private String stockCode;
     private String name;
     private String description;
     private String chg;

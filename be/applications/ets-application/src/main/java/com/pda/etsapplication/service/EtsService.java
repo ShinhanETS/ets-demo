@@ -59,7 +59,7 @@ public class EtsService {
                             currencySymbol = ""; // 기본값 설정
                     }
 
-                    return new StocksDto(stock.getName(), stock.getDescription(), chg, close, currencySymbol);
+                    return new StocksDto(stock.getStockCode(), stock.getName(), stock.getDescription(), chg, close, currencySymbol);
                 })
                 .collect(Collectors.toList());
 
