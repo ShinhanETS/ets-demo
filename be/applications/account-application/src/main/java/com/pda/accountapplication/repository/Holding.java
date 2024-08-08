@@ -24,7 +24,7 @@ public class Holding {
     @JoinColumn(name = "acct_no", referencedColumnName = "acct_no")
     private Account account; // 계좌번호
 
-    @Column(name = "id", nullable = false)
+    @Column(name = "user_id", nullable = false)
     private Long id; // id
 
     @Column(name = "quantity")
