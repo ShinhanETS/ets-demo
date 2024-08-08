@@ -1,4 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
+import { useSetRecoilState } from 'recoil'; // Recoil state 설정을 위한 import
+import { useNavigate } from 'react-router-dom'; // 페이지 이동을 위한 import
+import { productState } from '../recoil/state'; // productState import
 import MainBanner from '../assets/MainBanner.svg';
 import Korea from '../assets/Korea.webp';
 import USA from '../assets/USA.png';
@@ -22,6 +25,9 @@ export default function MainPage() {
     const [showModal, setShowModal] = useState(true);
     const [productList, setProductList] = useState([]);
     const { username } = useContext(UserContext);
+
+    const setProduct = useSetRecoilState(productState); // Recoil state 설정을 위한 함수
+    const navigate = useNavigate(); // 페이지 이동을 위한 함수
 
     const handleButtonClick = (number) => {
         setSelectedButton(number);
@@ -52,6 +58,12 @@ export default function MainPage() {
         fetchProducts();
       }
     }, [selectedTab, selectedButton]);
+
+    // Product 클릭 시 상세 페이지로 이동
+    const handleProductClick = (product) => {
+        setProduct(product); // 클릭한 product를 Recoil state에 설정
+        navigate(`/detail/${product.name}`); // 상세 페이지로 이동
+    };
 
     return (
         <div className="flex flex-col h-screen bg-white relative select-none">
@@ -161,39 +173,43 @@ export default function MainPage() {
 
               {/* 리스트 항목 */}
               <div className="space-y-2 mt-[3vh] overflow-y-auto h-[60vh]">
-                  {productList?.map((product, index) => {
-                      // product.chg 값을 숫자로 변환
-                      const chgValue = parseFloat(product.chg);
-                      let chgClass = '';
+              {productList?.map((product, index) => {
+                // product.chg 값에서 '%' 제거 및 float로 변환
+                const chgValue = parseFloat(product.chg.replace('%', ''));
+                let chgClass = '';
+                console.log(chgValue);
 
-                      // 클래스 결정 로직
-                      if (chgValue === 0.0) {
-                          chgClass = 'text-black-1';
-                      } else if (chgValue > 0) {
-                          chgClass = 'text-red-1';
-                      } else if (chgValue < 0) {
-                          chgClass = 'text-blue-1';
-                          product.chg = product.chg.substring(1); // '-' 제거
-                      }
-
-                      return (
-                          <div key={index} className="flex justify-between items-center gap-[2vw] p-2 bg-white rounded-lg active:bg-grey-2 transition duration-200 cursor-pointer">
-                              <div className='flex gap-4 items-center'>
-                                  <img src="https://file.alphasquare.co.kr/media/images/stock_logo/kr/005930.png" alt="" className='rounded-full w-12 h-12' />
-                                  <div className='flex flex-col gap-1 justify-between'>
-                                      <h3 className="font-semibold">{product.name}</h3>
-                                      <p className="text-[#666666] font-medium text-sm">({product.description})</p>
-                                  </div>
-                              </div>
-                              <div className="text-right">
-                                  <p className={`text-lg font-semibold ${chgClass}`}>{product.chg}</p>
-                                  <p className='font-medium text-black-1 text-nowrap'>{product.close}{product.currencySymbol}</p>
-                              </div>
+                // 클래스 결정 로직
+                if (chgValue === 0.0) {
+                    chgClass = 'text-black-1';
+                } else if (chgValue > 0) {
+                    chgClass = 'text-red-1';
+                } else if (chgValue < 0) {
+                    chgClass = 'text-blue-1';
+                    product.chg = product.chg.substring(1); // '-' 제거
+                }
+                return (
+                  <div 
+                    key={index} 
+                    className="flex justify-between items-center gap-[2vw] p-2 bg-white rounded-lg active:bg-grey-2 transition duration-200 cursor-pointer"
+                    onClick={() => handleProductClick(product)} // 클릭 이벤트 추가
+                  >
+                      <div className='flex gap-4 items-center'>
+                          <img src="https://file.alphasquare.co.kr/media/images/stock_logo/kr/005930.png" alt="" className='rounded-full w-12 h-12' />
+                          <div className='flex flex-col gap-1 justify-between'>
+                              <h3 className="font-semibold">{product.name}</h3>
+                              <p className="text-[#666666] font-medium text-sm">({product.description})</p>
                           </div>
-                      );
-                  })}
+                      </div>
+                      <div className="text-right">
+                          <p className={`text-lg font-semibold ${chgClass}`}>{product.chg}</p>
+                          <p className='font-medium text-black-1 text-nowrap'>{product.close}{product.currencySymbol}</p>
+                      </div>
+                  </div>
+              );
+              })}
               </div>
-              
+
             </div>
             <div className='flex justify-center items-center mt-20'>
               {/* 모달 표시 */}
