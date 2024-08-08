@@ -4,9 +4,9 @@ import X from '../../assets/X.png';
 import MainModalBanner from '../../assets/MainModalBanner.jpg';
 import Grade4 from '../../assets/Grade4.png';
 
+// eslint-disable-next-line react/prop-types
 export default function MainModal({ modalOpen, setModalOpen }) {
-  const progress = 50;
-
+  const progress = 50
   useEffect(() => {
     const modalStatus = localStorage.getItem('modalOpen');
     if (modalStatus === 'false') {
@@ -43,7 +43,7 @@ export default function MainModal({ modalOpen, setModalOpen }) {
               <div className="font-extrabold text-xl mb-[1vh]">
                 탄소배출권이란?
               </div>
-              <div className="text-[0.8rem] font-medium leading-tight leading-none">
+              <div className="text-[0.8rem] font-medium leading-tight">
                 탄소배출권 제도는 정부가 정한 온실가스 배출 한도를 기업에 할당하여, 기업이 이를 거래할 수 있게 하는 제도예요. 
                 배출권 매매를 통해 포트폴리오 다양성을 키우고, 간접적으로 기업들의 탄소 배출량을 줄이는 데 기여할 수 있어요.
               </div>
@@ -66,7 +66,7 @@ export default function MainModal({ modalOpen, setModalOpen }) {
               <div className="text-xl font-bold">
                 멤버쉽제도
               </div>
-              <div className="text-[0.8rem] font-light leading-tight leading-none">
+              <div className="text-[0.8rem] font-light leading-tight">
                 배출권을 매매할수록 멤버쉽 점수가 오르고, 점수가 높아질수록 등급이 상승해요. 
                 각 등급에 따라 다양한 멤버십 혜택이 제공되니, 점수를 올려 더 많은 혜택을 누려보세요!
               </div>
