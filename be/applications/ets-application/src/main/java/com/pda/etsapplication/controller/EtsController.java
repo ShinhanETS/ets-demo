@@ -5,6 +5,7 @@ import com.pda.apiutil.GlobalResponse;
 import com.pda.etsapplication.controller.dto.res.StocksDto;
 import com.pda.etsapplication.dto.OfferReqDto;
 import com.pda.etsapplication.dto.OfferTradeResDto;
+import com.pda.etsapplication.repository.DescriptionEntity;
 import com.pda.etsapplication.repository.NewsEntity;
 import com.pda.etsapplication.repository.PricesEntity;
 import com.pda.etsapplication.service.EtsService;
@@ -67,6 +68,11 @@ public class EtsController {
     @GetMapping("/stock/{stockCode}/news")
     public GlobalResponse<List<NewsEntity>> getNewsByStockCode(@PathVariable String stockCode) {
         return ApiUtil.success("뉴스 가져오기 성공", etsService.getNewsByStockCode(stockCode));
+    }
+
+    @GetMapping("/stock/{stockCode}/desc")
+    public GlobalResponse<DescriptionEntity> getDescription(@PathVariable String stockCode) {
+        return ApiUtil.success("상품 설명 가져오기 성공", etsService.getDescription(stockCode));
     }
 }
 
