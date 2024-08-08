@@ -27,6 +27,4 @@ public class AccountService {
                 .dollar(foundAccount.getDollar())
                 .build();
     }
-
-
 }

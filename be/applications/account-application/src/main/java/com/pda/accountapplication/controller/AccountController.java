@@ -36,7 +36,8 @@ public class AccountController {
     }
 
     // 계좌 조회
-    @GetMapping("/")
+    @Authenticated
+    @GetMapping
     public GlobalResponse<AccountDto> getAccountByUserId(@AuthInfo AuthUser authUser){
         AccountDto accountDto = accountService.getAccountById(authUser.getId());
         System.out.println(accountDto);
