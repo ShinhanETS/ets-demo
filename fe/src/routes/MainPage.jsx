@@ -55,16 +55,21 @@ export default function MainPage() {
 
   // 국가나 상품 변경될 때마다 종목들 새로고침
   useEffect(() => {
+    
     if (selectedTab !== 2) {
       const fetchProducts = async () => {
-        const response = await fetchProductList(
-          selectedTab,
-          tabNumberToURL[selectedButton]
-        );
+        const response = await fetchProductList(selectedTab, tabNumberToURL[selectedButton]);
         if (response.success) {
-          setProductList(response.data);
+          const processedData = response.data.map((product) => {
+            const chgValue = parseFloat(product.chg?.replace('%', ''));
+            if (chgValue > 0) {
+              product.chg = `+${product.chg}`;
+            }
+            return product;
+          });
+  
+          setProductList(processedData);
         }
-        console.log(response.data);
       };
       fetchProducts();
     }
@@ -176,7 +181,7 @@ export default function MainPage() {
                 </div>
 
                 <div className="space-y-2 mt-[3vh] overflow-y-auto h-[55vh]">
-                  {productList.length === 0 ? 
+                  {productList.length === 0? 
                     (
                       <div className="flex flex-col items-center justify-center mt-10">
                           <img src={selectedTab===2?Please:ComingSoon} alt="No Products" className="w-32 h-32 mb-4" />
@@ -192,9 +197,9 @@ export default function MainPage() {
                                 chgClass = 'text-black-1';
                             } else if (chgValue > 0) {
                                 chgClass = 'text-red-1';
+                                
                             } else if (chgValue < 0) {
                                 chgClass = 'text-blue-1';
-                                product.chg = product.chg.substring(1);
                             }
 
                             return (
