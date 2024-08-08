@@ -44,6 +44,12 @@ public class AccountController {
         return ApiUtil.success("성공", accountDto);
     }
 
+    @Authenticated
+    @GetMapping("/total")
+    public GlobalResponse<Long> getTotalWon(@AuthInfo AuthUser authUser){
+        return ApiUtil.success("계좌 총 금액 조회", accountService.getTotalWon(authUser.getId()));
+    }
+
     // 계좌 조회
     @GetMapping("/{id}")
     public GlobalResponse<AccountDto> getAccountById(@PathVariable Long id){
