@@ -48,11 +48,6 @@ export default function LandingPage() {
         </button>
       </div>
       <div>
-        <button onClick={handleApiExClick}>
-          Api 예시 페이지로 가기
-        </button>
-      </div>
-      <div>
         <Button color="blue">Flowbite예시</ Button>
       </div>
     </div>
