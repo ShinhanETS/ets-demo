@@ -281,20 +281,6 @@ services:
                 condition: service_completed_successfully
             kafka-ui:
                 condition: service_started
-    alert-db:
-        container_name: alert-db
-        image: mysql:8.0.33-oracle
-        environment:
-            - MYSQL_ROOT_PASSWORD=root
-            - MYSQL_DATABASE=alert-db
-            - TZ="Asia/Seoul"
-        ports:
-            - "3314:3306"
-        extra_hosts:
-            - "host.docker.internal:host-gateway"
-        command:
-            - --character-set-server=utf8mb4
-            - --collation-server=utf8mb4_unicode_ci
 
     alert-server:
         container_name: alert-server
