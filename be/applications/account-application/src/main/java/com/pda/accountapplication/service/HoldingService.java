@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,11 +56,21 @@ public class HoldingService {
 
 
     public SellQuantityDto getSellQuantity(Long id, String stockCode) {
-        Holding holding = holdingRepository.findByIdAndStockCode(id, stockCode);
-        return SellQuantityDto.builder()
-                .acctNo(holding.getAccount().getAcctNo())
-                .quantity(holding.getQuantity())
-                .stockCode(stockCode)
-                .build();
+        Optional<Holding> holding = holdingRepository.findByIdAndStockCode(id, stockCode);
+
+        if(!holding.isEmpty()){
+            return SellQuantityDto.builder()
+                    .acctNo(holding.get().getAccount().getAcctNo())
+                    .quantity(holding.get().getQuantity())
+                    .stockCode(stockCode)
+                    .build();
+        }else{
+            return SellQuantityDto.builder()
+                    .acctNo(null)
+                    .quantity(0L)
+                    .stockCode(stockCode)
+                    .build();
+        }
+
     }
 }
