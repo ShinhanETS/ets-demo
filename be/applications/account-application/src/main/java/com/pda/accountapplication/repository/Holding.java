@@ -28,8 +28,11 @@ public class Holding {
     @Column(name = "quantity")
     private Long quantity; // 수량
 
+    @Column(name = "current_price")
+    private Double currentPrice; // 현재가
+
     @Column(name = "total_price")
-    private Float totalPrice; // 총매수가격
+    private Double totalPrice; // 총매수가격
 
     @Column(name = "country")
     private Integer country; // 국가구분

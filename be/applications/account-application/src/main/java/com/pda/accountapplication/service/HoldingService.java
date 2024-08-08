@@ -27,6 +27,7 @@ public class HoldingService {
                 .stockCode(holding.getStockCode())
                 .acctNo(holding.getAccount().getAcctNo())
                 .quantity(holding.getQuantity())
+                .currentPrice(0.0)
                 .totalPrice(holding.getTotalPrice())
                 .country(holding.getCountry())
                 .build();
