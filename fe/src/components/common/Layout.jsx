@@ -45,13 +45,13 @@ export default function Layout() {
             </div>
             <div className="flex justify-between items-center w-full h-[18vh] mb-8 rounded-2xl" style={{ backgroundColor: 'rgba(9, 55, 188, 0.05)' }}>
               <div className='w-[49%] flex flex-col items-center'>
-                <p className="text-sm text-gray-500 font-medium">누적 투자금액</p>
+                <p className="text-sm text-gray-500 font-medium">당월 거래량</p>
                 <p className="text-lg font-bold">170,980원</p>
               </div>
               <div className='max-w-[3px] w-[0.5%] h-[60%] bg-[#D9D9D9]'></div>
               <div className='w-[49%] flex flex-col items-center'>
-                <p className="text-sm text-gray-500 font-medium">누적 거래량</p>
-                <p className="text-lg font-bold">어쩌구</p>
+                <p className="text-sm text-gray-500 font-medium">보유 평가액</p>
+                <p className="text-lg font-bold">214,431원</p>
               </div>
             </div>
             <h3 className="w-full text-md font-semibold mb-4">받을 수 있는 혜택</h3>
