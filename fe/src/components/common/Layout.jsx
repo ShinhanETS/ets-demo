@@ -19,11 +19,10 @@ export default function Layout() {
     const fetchData = async () => {
       const membershipApiData = await fetchMembership();
       setMembershipData(membershipApiData.data);
-      console.log(membershipApiData);
     };
 
     fetchData();
-  }, []);
+  }, [isBottom, isOpen]); // 형상 변화가 있을때마다 새로고침
 
   // API 응답에서 benefits, username을 가져옴
   const benefits = membershipData?.benefits || [];
