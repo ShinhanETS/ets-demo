@@ -28,7 +28,7 @@ export default function ChartContainer({ nowPrice }) {
   const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
-    const stockCode = "520043";
+    const stockCode = "EUA";
     const getChart = async () => {
       try {
         const response = await getCharts(stockCode);

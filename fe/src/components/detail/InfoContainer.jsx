@@ -7,7 +7,7 @@ export default function InfoContainer({ name, subname, price, rate, updown }) {
       </div>
       <div className="flex justify-between">
         <div className="flex items-end gap-1">
-          <span className="text-[1.7rem] font-bold">9,150원</span>
+          <span className="text-[1.6rem] font-bold">9,150원</span>
           <span className="text-[0.9rem]">TON/KRW</span>
         </div>
         <div className="flex flex-col items-end">

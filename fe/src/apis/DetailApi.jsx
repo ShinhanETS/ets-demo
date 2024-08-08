@@ -1,9 +1,9 @@
 // /ets/stock/CKX24/news
-import { etsInstance, testInstance } from "./BaseApi";
+import { etsInstance } from "./BaseApi";
 
 export async function buyStock(data) {
   try {
-    const response = await testInstance.post(`/ets/stock/buy`, data);
+    const response = await etsInstance.post(`/stock/buy`, data);
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -13,7 +13,7 @@ export async function buyStock(data) {
 
 export async function sellStock(data) {
   try {
-    const response = await testInstance.post(`/ets/stock/sell`, {
+    const response = await etsInstance.post(`/stock/sell`, {
       stock_code: data.stock_code,
       price: data.price,
       quantity: data.quantity,
@@ -27,7 +27,7 @@ export async function sellStock(data) {
 
 export async function getCharts(stockCode) {
   try {
-    const response = await testInstance.get(`/ets/stock/${stockCode}`);
+    const response = await etsInstance.get(`/stock/${stockCode}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -37,7 +37,7 @@ export async function getCharts(stockCode) {
 
 export async function getArticles(stockCode) {
   try {
-    const response = await testInstance.get(`/ets/stock/${stockCode}/news`);
+    const response = await etsInstance.get(`/stock/${stockCode}/news`);
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);

@@ -4,22 +4,22 @@ import { buyStock, getCharts, sellStock } from "../../apis/DetailApi";
 import SimpleChart from "./SimpleChart";
 import Loading from "./Loading";
 
-export default function BuySellContainer({ isBuy, price }) {
+export default function BuySellContainer({ isBuy, price, tab }) {
   const [amount, setAmount] = useState(0);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [value, setValue] = useState(0);
 
   const [isLoading, setIsLoading] = useState(true);
   const [chartData, setChartData] = useState([]);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
-    const stockCode = "520043";
+    const stockCode = "EUA";
     const getChart = async () => {
       try {
         const response = await getCharts(stockCode);
-        console.log(response.data.length);
         setChartData(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -28,8 +28,12 @@ export default function BuySellContainer({ isBuy, price }) {
     };
 
     getChart();
-    setMessage("CKH25 3주 (289,000원) 체결되었습니다.");
   }, []);
+
+  useEffect(() => {
+    setValue(0);
+    setAmount(0);
+  }, [tab]);
 
   const onChange = (e) => {
     setIsError(false);
@@ -53,10 +57,14 @@ export default function BuySellContainer({ isBuy, price }) {
       console.log(response);
 
       if (response.data.order.status === "COMPLETED") {
-        setMessage("구매가 완료되었습니다.");
+        setMessage(
+          `${response.data.order.stock_code} ${response.data.trade.trade_quantity}주 (${response.data.trade.tradePrice}} 체결되었습니다.`
+        );
+        setIsSuccess(true);
         // submessage {response.data.order.stock_code} {response.data.trade.trade_quantity}주 ({response.data.trade.tradePrice}} 체결되었습니다.
       } else {
         setMessage(response.message);
+        setIsSuccess(false);
         // submessage {response.data.message}
       }
       setIsOpen(true);
@@ -70,11 +78,15 @@ export default function BuySellContainer({ isBuy, price }) {
       const response = await sellStock(data);
       console.log(response);
 
-      if (response.data.data.order.status === "COMPLETED") {
-        setMessage("판매가 완료되었습니다.");
+      if (response.data.order.status === "COMPLETED") {
+        setMessage(
+          `${response.data.order.stock_code} ${response.data.trade.trade_quantity}주 (${response.data.trade.tradePrice}} 판매되었습니다.`
+        );
+        setIsSuccess(true);
         // submessage
       } else {
-        setMessage("판매에 실패했습니다.");
+        setMessage(response.message);
+        setIsSuccess(false);
         // submessage {response.data.message}
       }
       setIsOpen(true);
@@ -118,7 +130,12 @@ export default function BuySellContainer({ isBuy, price }) {
 
   return (
     <>
-      <ConfirmAlert isOpen={isOpen} setIsOpen={setIsOpen} message={message} />
+      <ConfirmAlert
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        message={message}
+        isSuccess={isSuccess}
+      />
       <div className="z-10 h-[calc(100vh_-_231px)] flex flex-col pb-[1.4rem] gap-2 bg-white-1 overflow-x-hidden overflow-y-scroll">
         <div>
           {isLoading ? <Loading /> : <SimpleChart chartData={chartData} />}

@@ -10,17 +10,17 @@ export const loginInstance = axios.create({
   withCredentials: true,
 });
 
-// ets 인스턴스
-export const etsInstance = axios.create({
-  baseURL: REAL_URL,
-  withCredentials: true,
-});
+// // ets 인스턴스
+// export const etsInstance = axios.create({
+//   baseURL: REAL_URL,
+//   withCredentials: true,
+// });
 
-// ets 매수/매도 임시 인스턴스
-export const testInstance = axios.create({
-  baseURL: TEST_URL,
-  withCredentials: true,
-});
+// // ets 매수/매도 임시 인스턴스
+// export const testInstance = axios.create({
+//   baseURL: TEST_URL,
+//   withCredentials: true,
+// });
 
 // 멤버쉽 인스턴스
 export const membershipInstance = axios.create({
@@ -29,7 +29,7 @@ export const membershipInstance = axios.create({
 });
 
 // ets 인스턴스
-export const estInstance = axios.create({
+export const etsInstance = axios.create({
   baseURL: `${BASE_URL}/ets`,
   withCredentials: true,
 });
@@ -49,21 +49,7 @@ membershipInstance.interceptors.request.use(
 );
 
 // 인터셉터로 토큰 넣어주기 (로그인 제외 다 해줘야함)
-testInstance.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// 인터셉터로 토큰 넣어주기 (로그인 제외 다 해줘야함)
-estInstance.interceptors.request.use(
+etsInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
     if (token) {

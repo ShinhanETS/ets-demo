@@ -36,7 +36,7 @@ export default function ProductDetail() {
       ) : tab === 2 ? (
         <BuySellContainer isBuy={true} />
       ) : tab === 3 ? (
-        <BuySellContainer isBuy={false} />
+        <BuySellContainer isBuy={false} tab={tab} />
       ) : (
         <ArticleContainer />
       )}
