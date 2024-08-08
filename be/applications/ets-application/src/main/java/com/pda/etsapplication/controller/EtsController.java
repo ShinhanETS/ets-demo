@@ -3,8 +3,11 @@ package com.pda.etsapplication.controller;
 import com.pda.apiutil.ApiUtil;
 import com.pda.apiutil.GlobalResponse;
 import com.pda.etsapplication.controller.dto.res.StocksDto;
+import com.pda.etsapplication.dto.HoldingDto;
+import com.pda.etsapplication.dto.MyCurrentDto;
 import com.pda.etsapplication.dto.OfferReqDto;
 import com.pda.etsapplication.dto.OfferTradeResDto;
+import com.pda.etsapplication.repository.DescriptionEntity;
 import com.pda.etsapplication.repository.NewsEntity;
 import com.pda.etsapplication.repository.PricesEntity;
 import com.pda.etsapplication.service.EtsService;
@@ -67,6 +70,24 @@ public class EtsController {
     @GetMapping("/stock/{stockCode}/news")
     public GlobalResponse<List<NewsEntity>> getNewsByStockCode(@PathVariable String stockCode) {
         return ApiUtil.success("뉴스 가져오기 성공", etsService.getNewsByStockCode(stockCode));
+    }
+
+    // webClient 통신
+    @PostMapping("/current")
+    public GlobalResponse<List<HoldingDto>> getCurrentHoldings(@RequestBody List<HoldingDto> holdingDtoList) {
+        List<HoldingDto> result = etsService.getHoldingList(holdingDtoList);
+        return ApiUtil.success("현재가", result);
+    }
+
+    @GetMapping("/stock/{stockCode}/desc")
+    public GlobalResponse<DescriptionEntity> getDescription(@PathVariable String stockCode) {
+        return ApiUtil.success("상품 설명 가져오기 성공", etsService.getDescription(stockCode));
+    }
+
+    @Authenticated
+    @GetMapping("/my-current")
+    public GlobalResponse<MyCurrentDto> getMyCurrent(@AuthInfo AuthUser authUser) {
+        return ApiUtil.success("당월 거래량, 보유 평가액 조회", etsService.getMyCurrent(authUser));
     }
 }
 

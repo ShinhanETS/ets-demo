@@ -11,4 +11,7 @@ public interface HoldingRepository extends JpaRepository<Holding, String> {
 
     List<Holding> findAllById(Long id);
 
+    List<Holding> findAllByIdAndType(Long id, String type);
+
+    Holding findByIdAndStockCode(Long id, String stockCode);
 }
