@@ -16,8 +16,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -90,8 +92,8 @@ public class EtsService {
         //String todayDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
         String todayDate = "20240805";
         List<String> stockCodes = holdingDtoList.stream()
-                .map(HoldingDto::getStockCode)
-                .collect(Collectors.toList());
+            .map(HoldingDto::getStockCode)
+            .collect(Collectors.toList());
 
         List<StocksEntity> stocks = stocksRepository.findByStockCodeIn(stockCodes);
 
@@ -109,9 +111,9 @@ public class EtsService {
             PricesEntity priceEntity = pricesMap.get(holdingDto.getStockCode());
             if (priceEntity != null) {
                 StocksEntity stockEntity = stocks.stream()
-                        .filter(stock -> stock.getStockCode().equals(holdingDto.getStockCode()))
-                        .findFirst()
-                        .orElse(null);
+                    .filter(stock -> stock.getStockCode().equals(holdingDto.getStockCode()))
+                    .findFirst()
+                    .orElse(null);
 
                 // currencySymbol 설정
                 String currencySymbol;
@@ -130,21 +132,21 @@ public class EtsService {
                 }
 
                 PriceDto priceDto = PriceDto.builder()
-                        .name(stockEntity != null ? stockEntity.getName() : null)
-                        .description(stockEntity != null ? stockEntity.getDescription() : null)
-                        .chg(priceEntity.getChg())
-                        .close(priceEntity.getClose())
-                        .currencySymbol(currencySymbol)
-                        .build();
+                    .name(stockEntity != null ? stockEntity.getName() : null)
+                    .description(stockEntity != null ? stockEntity.getDescription() : null)
+                    .chg(priceEntity.getChg())
+                    .close(priceEntity.getClose())
+                    .currencySymbol(currencySymbol)
+                    .build();
 
                 holdingDto.setCurrentPrice(priceDto);
             }
         }
         return holdingDtoList;
+    }
 
     public DescriptionEntity getDescription(String stockCode) {
         return descriptionRepository.findByStockCode(stockCode)
             .orElseThrow(() -> CommonException.create("해당 상품 설명이 아직 없음"));
-
     }
 }

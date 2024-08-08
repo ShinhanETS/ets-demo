@@ -75,12 +75,12 @@ public class EtsController {
     @PostMapping("/current")
     public GlobalResponse<List<HoldingDto>> getCurrentHoldings(@RequestBody List<HoldingDto> holdingDtoList) {
         List<HoldingDto> result = etsService.getHoldingList(holdingDtoList);
-        return ApiUtil.success("현재가",result);
+        return ApiUtil.success("현재가", result);
+    }
 
     @GetMapping("/stock/{stockCode}/desc")
     public GlobalResponse<DescriptionEntity> getDescription(@PathVariable String stockCode) {
         return ApiUtil.success("상품 설명 가져오기 성공", etsService.getDescription(stockCode));
-
     }
 }
 
