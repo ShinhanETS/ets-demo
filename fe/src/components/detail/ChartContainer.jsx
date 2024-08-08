@@ -17,9 +17,6 @@ import {
   SingleValueTooltip,
 } from "react-financial-charts";
 import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
-import { chartState } from "../../recoil/state";
-import { initialData } from "./data";
 import { getCharts } from "../../apis/DetailApi";
 import Loading from "./Loading";
 import { useParams } from "react-router-dom";
