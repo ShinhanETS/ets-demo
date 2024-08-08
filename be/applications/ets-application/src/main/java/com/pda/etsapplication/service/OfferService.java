@@ -274,7 +274,7 @@ public class OfferService {
         // webClient 요청
         webClientAPI.putHolding(authUser, PutHoldingDto.builder()
                 .isMinus(isMinus)
-                .stockType(stock.getStockCode())
+                .stockCode(stock.getStockCode())
                 .stockType(stock.getSector())
                 .nowPrice(nowPrice)
                 .country(stock.getCountry())
