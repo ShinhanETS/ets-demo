@@ -9,4 +9,7 @@ import java.util.Optional;
 @Repository
 public interface StocksRepository extends JpaRepository<StocksEntity, String> {
     List<StocksEntity> findByCountryAndSector(Integer country, String sector);
+
+
+    Optional<StocksEntity> findByStockCode(String stockCode);
 }
