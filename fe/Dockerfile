@@ -16,5 +16,5 @@ COPY --from=builder /usr/src/app/dist /usr/share/nginx/html
 RUN rm /etc/nginx/conf.d/default.conf
 COPY conf/default.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 3000
+EXPOSE 8888
 CMD ["nginx", "-g", "daemon off;"]
