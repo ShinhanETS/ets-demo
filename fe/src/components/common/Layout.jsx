@@ -83,7 +83,9 @@ export default function Layout() {
               </div>
               <div
                 className="flex justify-between items-center w-full h-[18vh] mb-8 rounded-2xl"
-                style={{ backgroundColor: "rgba(9, 55, 188, 0.05)" }}
+                style={{
+                  backgroundColor: "rgba(9, 55, 188, 0.05)",
+                }}
               >
                 <div className="w-[49%] flex flex-col items-center">
                   <p className="text-sm text-gray-500 font-medium">
