@@ -1,8 +1,10 @@
 import { useState, useEffect, useContext } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil"; // Recoil state 설정을 위한 import
-import { useNavigate } from "react-router-dom"; // 페이지 이동을 위한 import
-import { bottomState, productState } from "../recoil/state"; // productState import
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { useNavigate } from "react-router-dom";
+import { bottomState, productState } from "../recoil/state";
 import MainBanner from "../assets/MainBanner.svg";
+import ComingSoon from "../assets/ComingSoon.gif";
+import Please from "../assets/Please.gif";
 import Korea from "../assets/Korea.webp";
 import USA from "../assets/USA.png";
 import Europe from "../assets/Europe.png";
@@ -11,6 +13,7 @@ import MainButton from "../components/main/MainButton";
 import MainModal from "../components/main/MainModal";
 import { fetchProductList } from "../apis/EtsApi";
 import { UserContext } from "../components/common/Layout";
+import imageMapping from "../components/main/RenderImage";
 
 export const tabNumberToURL = {
   0: "CERs",
@@ -71,7 +74,7 @@ export default function MainPage() {
   const handleProductClick = (product) => {
     console.log(product);
     setProduct(product); // 클릭한 product를 Recoil state에 설정
-    navigate(`/detail/${product.name}`); // 상세 페이지로 이동
+    navigate(`/detail/${product.stockCode}`); // 상세 페이지로 이동
   };
 
   return (
@@ -149,9 +152,7 @@ export default function MainPage() {
         )}
       </div>
 
-      {/* 내용 영역 */}
       <div className="p-5 flex-1">
-        {/* 거래 권 섹션 */}
         <div className="flex gap-2 mt-[8vh]">
           <MainButton
             selected={selectedButton === 0}
@@ -175,58 +176,67 @@ export default function MainPage() {
           />
         </div>
 
-        {/* 리스트 항목 */}
-        <div className="space-y-2 mt-[3vh] overflow-y-auto h-[60vh]">
-          {productList?.map((product, index) => {
-            // product.chg 값에서 '%' 제거 및 float로 변환
-            const chgValue = parseFloat(product.chg?.replace("%", ""));
-            let chgClass = "";
-            console.log(chgValue);
+        <div className="space-y-2 mt-[3vh] overflow-y-auto h-[55vh]">
+          {productList.length === 0 ? (
+            <div className="flex flex-col items-center justify-center mt-10">
+              <img
+                src={selectedTab === 2 ? Please : ComingSoon}
+                alt="No Products"
+                className="w-32 h-32 mb-4"
+              />
+              <p className="text-lg font-semibold text-gray-500">
+                상품이 없어요
+              </p>
+            </div>
+          ) : (
+            productList?.map((product, index) => {
+              const chgValue = parseFloat(product.chg?.replace("%", ""));
+              let chgClass = "";
 
-            // 클래스 결정 로직
-            if (chgValue === 0.0) {
-              chgClass = "text-black-1";
-            } else if (chgValue > 0) {
-              chgClass = "text-red-1";
-            } else if (chgValue < 0) {
-              chgClass = "text-blue-1";
-              // product.chg = product.chg.substring(1); // '-' 제거
-            }
-            return (
-              <div
-                key={index}
-                className="flex justify-between items-center gap-[2vw] p-2 bg-white rounded-lg active:bg-grey-2 transition duration-200 cursor-pointer"
-                onClick={() => handleProductClick(product)} // 클릭 이벤트 추가
-              >
-                <div className="flex gap-4 items-center">
-                  <img
-                    src="https://file.alphasquare.co.kr/media/images/stock_logo/kr/005930.png"
-                    alt=""
-                    className="rounded-full w-12 h-12"
-                  />
-                  <div className="flex flex-col gap-1 justify-between">
-                    <h3 className="font-semibold">{product.name}</h3>
-                    <p className="text-[#666666] font-medium text-sm">
-                      ({product.description})
+              if (chgValue === 0.0) {
+                chgClass = "text-black-1";
+              } else if (chgValue > 0) {
+                chgClass = "text-red-1";
+              } else if (chgValue < 0) {
+                chgClass = "text-blue-1";
+                // product.chg = product.chg.substring(1);
+              }
+
+              return (
+                <div
+                  key={index}
+                  className="flex justify-between items-center gap-[2vw] p-2 bg-white rounded-lg active:bg-grey-2 transition duration-200 cursor-pointer"
+                  onClick={() => handleProductClick(product)}
+                >
+                  <div className="flex gap-4 items-center">
+                    <img
+                      src={imageMapping[product?.name]}
+                      alt=""
+                      className="rounded-full w-12 h-12"
+                    />
+                    <div className="flex flex-col gap-1 justify-between">
+                      <h3 className="font-semibold">{product.name}</h3>
+                      <p className="text-[#666666] font-medium text-sm">
+                        ({product.description})
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-lg font-semibold ${chgClass}`}>
+                      {product.chg}
+                    </p>
+                    <p className="font-medium text-black-1 text-nowrap">
+                      {product.close}
+                      {product.currencySymbol}
                     </p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className={`text-lg font-semibold ${chgClass}`}>
-                    {product.chg}
-                  </p>
-                  <p className="font-medium text-black-1 text-nowrap">
-                    {product.close}
-                    {product.currencySymbol}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </div>
       <div className="flex justify-center items-center mt-20">
-        {/* 모달 표시 */}
         {showModal && (
           <MainModal modalOpen={showModal} setModalOpen={setShowModal} />
         )}

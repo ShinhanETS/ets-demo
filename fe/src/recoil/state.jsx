@@ -40,6 +40,7 @@ export const membershipState = atom({
 export const productState = atom({
   key: "productState",
   default: {
+    stockCode: "KAU23",
     name: "KAU23",
     description: "한국 탄소 배출권(2023년 만기)",
     chg: "0.5%",
