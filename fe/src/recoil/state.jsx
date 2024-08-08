@@ -11,9 +11,3 @@ export const detailTabState = atom({
     key: 'detailTab',
     default: 0,
 })
-
-// 멤버쉽 데이터
-export const membershipState = atom({
-    key: 'membership',
-    default: {}
-})

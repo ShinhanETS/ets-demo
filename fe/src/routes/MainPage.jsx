@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import MainBanner from '../assets/MainBanner.svg';
 import Korea from '../assets/Korea.webp';
 import USA from '../assets/USA.png';
@@ -7,12 +7,21 @@ import China from '../assets/China.png';
 import MainButton from '../components/main/MainButton';
 import MainModal from '../components/main/MainModal'; 
 import { fetchProductList } from '../apis/EtsApi';
+import { UserContext } from '../components/common/Layout';
+
+export const tabNumberToURL = {
+  0: 'CERs',
+  1: 'ETF',
+  2: 'ETN',
+  3: 'FUTURE'
+}
 
 export default function MainPage() {
     const [selectedTab, setSelectedTab] = useState(0);
     const [selectedButton, setSelectedButton] = useState(0);
     const [showModal, setShowModal] = useState(true);
     const [productList, setProductList] = useState([]);
+    const { username } = useContext(UserContext);
 
     const handleButtonClick = (number) => {
         setSelectedButton(number);
@@ -30,15 +39,19 @@ export default function MainPage() {
         }
     }, []);
 
-    // 탭이 변경될때마다 종목들 새로고침
-    useEffect(()=>{
+    // 국가나 상품 변경될 때마다 종목들 새로고침
+    useEffect(() => {
+      if (selectedTab !== 2) {
         const fetchProducts = async () => {
-            const productListResponse = await fetchProductList(0, 'CERs');
-            setProductList(productListResponse);
-            console.log(productListResponse) 
-        }
+            const response = await fetchProductList(selectedTab, tabNumberToURL[selectedButton]);
+            if (response.success) {
+                setProductList(response.data);
+            }
+            console.log(response.data);
+        };
         fetchProducts();
-    },[selectedTab])
+      }
+    }, [selectedTab, selectedButton]);
 
     return (
         <div className="flex flex-col h-screen bg-white relative select-none">
@@ -61,7 +74,7 @@ export default function MainPage() {
                 {selectedTab !== 2 ? (
                     <div className="w-[91vw] h-[16vh] mx-[4.5vw] bg-white-1 rounded-2xl p-4 absolute mt-[12vh] drop-shadow-md flex">
                         <div className="w-[60%] flex flex-col gap-1 justify-center">
-                            <h2 className="text-md font-black font-bold">OOO님, 탄소배출권을 <br /> 거래해보세요!</h2>
+                            <h2 className="text-md font-black font-bold">{username}님, 탄소배출권을 <br /> 거래해보세요!</h2>
                             <p className="text-xs">
                                 탄소배출권을 거래함으로써 사용자가 얻을 수 있는 기대효과를 염두에 두고 사용해보세요!
                             </p>
@@ -73,7 +86,7 @@ export default function MainPage() {
                 ) : (
                     <div className="flex flex-col justify-center items-start p-6 gap-2 w-[91vw] h-[16vh] mx-[4.5vw] bg-white-1 rounded-2xl absolute mt-[12vh] drop-shadow-md">
                         <div className='font-medium text-sm'>
-                            현재 OOO님의 예수금
+                            현재 {username}님의 예수금
                         </div>
                         <div className='flex w-full gap-1 justify-around'>
                             <div className='flex flex-col items-center'>
@@ -127,7 +140,7 @@ export default function MainPage() {
                     <MainButton
                         selected={selectedButton === 0}
                         onClick={() => handleButtonClick(0)}
-                        text="거래권"
+                        text="배출권"
                     />
                     <MainButton
                         selected={selectedButton === 1}
@@ -146,24 +159,41 @@ export default function MainPage() {
                     />
                 </div>
 
-                {/* 리스트 항목 */}
-                <div className="space-y-2 mt-[3vh] overflow-y-auto h-[60vh]">
-                    {Array.from({ length: 8 }).map((_, index) => (
-                        <div key={index} className="flex justify-between items-center gap-[2vw] p-2 bg-white rounded-lg active:bg-grey-2 transition duration-200 cursor-pointer">
-                            <div className='flex gap-4'>
-                                <img src="https://file.alphasquare.co.kr/media/images/stock_logo/kr/005930.png" alt="" className='rounded-full w-12 h-12' />
-                                <div className='flex flex-col gap-1 justify-between'>
-                                    <h3 className="font-semibold">STHP</h3>
-                                    <p className="text-[#666666] font-medium text-sm">(스텀 타타이 수력 발전 프로젝트)</p>
-                                </div>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-red-1 text-lg font-semibold">2.6%</p>
-                                <p className='font-medium text-black-1'>8,400원</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+              {/* 리스트 항목 */}
+              <div className="space-y-2 mt-[3vh] overflow-y-auto h-[60vh]">
+                  {productList?.map((product, index) => {
+                      // product.chg 값을 숫자로 변환
+                      const chgValue = parseFloat(product.chg);
+                      let chgClass = '';
+
+                      // 클래스 결정 로직
+                      if (chgValue === 0.0) {
+                          chgClass = 'text-black-1';
+                      } else if (chgValue > 0) {
+                          chgClass = 'text-red-1';
+                      } else if (chgValue < 0) {
+                          chgClass = 'text-blue-1';
+                          product.chg = product.chg.substring(1); // '-' 제거
+                      }
+
+                      return (
+                          <div key={index} className="flex justify-between items-center gap-[2vw] p-2 bg-white rounded-lg active:bg-grey-2 transition duration-200 cursor-pointer">
+                              <div className='flex gap-4 items-center'>
+                                  <img src="https://file.alphasquare.co.kr/media/images/stock_logo/kr/005930.png" alt="" className='rounded-full w-12 h-12' />
+                                  <div className='flex flex-col gap-1 justify-between'>
+                                      <h3 className="font-semibold">{product.name}</h3>
+                                      <p className="text-[#666666] font-medium text-sm">({product.description})</p>
+                                  </div>
+                              </div>
+                              <div className="text-right">
+                                  <p className={`text-lg font-semibold ${chgClass}`}>{product.chg}</p>
+                                  <p className='font-medium text-black-1 text-nowrap'>{product.close}{product.currencySymbol}</p>
+                              </div>
+                          </div>
+                      );
+                  })}
+              </div>
+              
             </div>
             <div className='flex justify-center items-center mt-20'>
               {/* 모달 표시 */}
