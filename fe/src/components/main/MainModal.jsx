@@ -1,11 +1,24 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { Modal } from "flowbite-react";
 import X from '../../assets/X.png';
 import MainModalBanner from '../../assets/MainModalBanner.jpg';
 import Grade4 from '../../assets/Grade4.png';
 
 export default function MainModal({ modalOpen, setModalOpen }) {
-  const progress = 50
+  const progress = 50;
+
+  useEffect(() => {
+    const modalStatus = localStorage.getItem('modalOpen');
+    if (modalStatus === 'false') {
+      setModalOpen(false);
+    }
+  }, [setModalOpen]);
+
+  const handleDontShowAgain = () => {
+    localStorage.setItem('modalOpen', 'false');
+    setModalOpen(false);
+  };
+
   return (
     <div>
       <Modal show={modalOpen} onClose={() => setModalOpen(false)}
@@ -16,7 +29,7 @@ export default function MainModal({ modalOpen, setModalOpen }) {
         <Modal.Body className="bg-white-1 rounded-2xl p-0 flex flex-col mx-4">
           <div className="px-2 pt-2">
             <div className="flex justify-between">
-              <div className="text-sm font-light underline text-[#6A6A6A] cursor-pointer">
+              <div className="text-sm font-light underline text-[#6A6A6A] cursor-pointer" onClick={handleDontShowAgain}>
                 다시보지 않기
               </div>
               <div className="w-[8%] max-w-[30px] cursor-pointer" onClick={() => { setModalOpen(false) }}>
@@ -36,8 +49,8 @@ export default function MainModal({ modalOpen, setModalOpen }) {
               </div>
             </div>
           </div>
-          <div className="flex justify-center items-center h-[24vh] bg-[#6E7CBC] px-6">
-            <div className='w-full'>
+          <div className="flex justify-center items-center h-[24vh] gap-4 bg-[#6E7CBC] px-7">
+            <div className='w-[24vw]'>
               <img src={Grade4} alt="" className="" />
               <div className="relative w-full h-1 bg-[#D9D9D9] rounded">
                 <div
@@ -49,8 +62,8 @@ export default function MainModal({ modalOpen, setModalOpen }) {
                 />
               </div>
             </div>
-            <div className="text-white-1">
-              <div className="text-xl font-extrabold">
+            <div className="w-[40vw] text-white-1">
+              <div className="text-xl font-bold">
                 멤버쉽제도
               </div>
               <div className="text-[0.8rem] font-light leading-tight leading-none">
