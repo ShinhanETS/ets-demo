@@ -83,6 +83,7 @@ public class HoldingService {
         Account account = accountRepository.findById(authUser.getId())
             .orElseThrow(() -> CommonException.create("현재 계좌가 없음"));
 
+        log.info("put holding 시작");
         Double totalPrice = 0D;
         if (putHoldingDto.isMinus()) {
             totalPrice += putHoldingDto.getNowPrice()*putHoldingDto.getQuantity();
@@ -97,6 +98,7 @@ public class HoldingService {
             Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
             if (holding == null) {
+                log.info("put holding 1-1");
               holdingRepository.save(Holding.builder()
                       .account(account)
                       .type(putHoldingDto.getStockType())
@@ -107,9 +109,11 @@ public class HoldingService {
                       .country(putHoldingDto.getCountry())
                   .build());
             } else if (putHoldingDto.isMinus()) {
+                log.info("put holding 1-2");
                 holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
             } else {
+                log.info("put holding 1-3");
                 holding.setQuantity(holding.getQuantity() + putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
             }
@@ -117,11 +121,10 @@ public class HoldingService {
             account.setEuro(account.getEuro()+totalPrice);
             accountRepository.save(account);
 
-            account.setWon(account.getWon()+totalPrice);
-            accountRepository.save(account);
             Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
             if (holding == null) {
+                log.info("put holding 2-1");
                 holdingRepository.save(Holding.builder()
                     .account(account)
                     .type(putHoldingDto.getStockType())
@@ -132,9 +135,11 @@ public class HoldingService {
                     .country(putHoldingDto.getCountry())
                     .build());
             } else if (putHoldingDto.isMinus()) {
+                log.info("put holding 2-2");
                 holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
             } else {
+                log.info("put holding 2-3");
                 holding.setQuantity(holding.getQuantity() + putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
             }
@@ -144,6 +149,7 @@ public class HoldingService {
             Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
             if (holding == null) {
+                log.info("put holding 3-1");
                 holdingRepository.save(Holding.builder()
                     .account(account)
                     .type(putHoldingDto.getStockType())
@@ -154,9 +160,11 @@ public class HoldingService {
                     .country(putHoldingDto.getCountry())
                     .build());
             } else if (putHoldingDto.isMinus()) {
+                log.info("put holding 3-2");
                 holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
             } else {
+                log.info("put holding 3-3");
                 holding.setQuantity(holding.getQuantity() + putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
             }
