@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface StocksRepository extends JpaRepository<StocksEntity, String> {
     List<StocksEntity> findByCountryAndSector(Integer country, String sector);
 
-
     Optional<StocksEntity> findByStockCode(String stockCode);
+    boolean existsByStockCode(String stockCode);
 }
