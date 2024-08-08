@@ -11,10 +11,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -63,9 +66,17 @@ public class WebClientAPI {
     }
 
     public void putHolding(AuthUser authUser, PutHoldingDto putHoldingDto) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("stockCode", putHoldingDto.getStockCode());
+        body.put("isMinus", putHoldingDto.isMinus());
+        body.put("quantity", putHoldingDto.getQuantity());
+        body.put("nowPrice", putHoldingDto.getNowPrice());
+        body.put("country", putHoldingDto.getCountry());
+        body.put("stockType", putHoldingDto.getStockType());
+
         Mono<GlobalResponse<Void>> mono = webClient.put().uri(accountUrl+"/api/accounts/holdings")
             .header("Authorization", "Bearer " + authUser.getToken())
-            .bodyValue(putHoldingDto)
+            .body(BodyInserters.fromValue(body))
             .exchangeToMono(reponse -> {
                 if (!reponse.statusCode().is2xxSuccessful()){
                     log.info("API = {}", accountUrl + "/api/accounts/holdings");
