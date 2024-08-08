@@ -94,7 +94,7 @@ public class HoldingService {
         if (putHoldingDto.getCountry().equals(0)) {
             account.setWon(account.getWon()+totalPrice);
             accountRepository.save(account);
-            Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode());
+            Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
             if (holding == null) {
               holdingRepository.save(Holding.builder()
@@ -119,7 +119,7 @@ public class HoldingService {
 
             account.setWon(account.getWon()+totalPrice);
             accountRepository.save(account);
-            Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode());
+            Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
             if (holding == null) {
                 holdingRepository.save(Holding.builder()
@@ -141,7 +141,7 @@ public class HoldingService {
         } else if (putHoldingDto.getCountry().equals(2)) {
             account.setYuan(account.getYuan()+totalPrice);
             accountRepository.save(account);
-            Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode());
+            Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
             if (holding == null) {
                 holdingRepository.save(Holding.builder()
@@ -163,7 +163,7 @@ public class HoldingService {
         } else if (putHoldingDto.getCountry().equals(3)) {
             account.setDollar(account.getDollar()+totalPrice);
             accountRepository.save(account);
-            Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode());
+            Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
             if (holding == null) {
                 holdingRepository.save(Holding.builder()

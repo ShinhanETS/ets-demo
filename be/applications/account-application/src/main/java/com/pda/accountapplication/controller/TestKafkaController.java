@@ -32,7 +32,6 @@ public class TestKafkaController {
                 .stockCode("stock")
                 .stockName("stockName")
                 .totalKRWAmount(4200000D)
-                .totalTradeAmount(20)
                 .tradeDate(LocalDateTime.now())
                 .tradeType("매수")
             .build());
