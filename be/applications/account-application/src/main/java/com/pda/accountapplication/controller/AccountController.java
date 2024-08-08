@@ -2,6 +2,7 @@ package com.pda.accountapplication.controller;
 
 import com.pda.accountapplication.dto.AccountDto;
 import com.pda.accountapplication.dto.HoldingDto;
+import com.pda.accountapplication.dto.PutHoldingDto;
 import com.pda.accountapplication.dto.SellQuantityDto;
 import com.pda.accountapplication.service.AccountService;
 import com.pda.accountapplication.service.HoldingService;
@@ -15,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -107,6 +110,12 @@ public class AccountController {
     public GlobalResponse<SellQuantityDto> getSellQuantity(@AuthInfo AuthUser authUser, @PathVariable("stock_code") String stockCode ){
         SellQuantityDto sellQuantityDto = holdingService.getSellQuantity(authUser.getId(), stockCode);
         return ApiUtil.success("성공", sellQuantityDto);
+    }
+
+    @Authenticated
+    @PutMapping("/holdings")
+    public GlobalResponse<Void> putHolding(@AuthInfo AuthUser authUser, @RequestBody PutHoldingDto putHoldingDto) {
+        return ApiUtil.success("계좌반영", holdingService.putHolding(authUser, putHoldingDto));
     }
 
 
