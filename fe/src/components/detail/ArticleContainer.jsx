@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import Loading from "./Loading";
 import { getArticles } from "../../apis/DetailApi";
+import { useParams } from "react-router-dom";
 
 export default function ArticleContainer() {
+  const params = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [articles, setArticles] = useState([]);
 
   useEffect(() => {
     const getArticle = async () => {
       try {
-        const response = await getArticles("CKX24");
+        const response = await getArticles(params.productId);
         console.log(response);
         setArticles(response.data);
         setIsLoading(false);
@@ -30,7 +32,7 @@ export default function ArticleContainer() {
       {isLoading ? (
         <Loading />
       ) : (
-        <div className="h-[calc(100vh_-_231px)] flex flex-col gap-8 bg-white-1 px-[1.5rem] pt-[0.8rem] pb-[4rem] overflow-scroll">
+        <div className="h-[calc(100vh_-_244px)] flex flex-col gap-8 bg-white-1 px-[1.5rem] pt-[0.8rem] pb-[4rem] overflow-scroll">
           {articles.map((article, idx) => (
             <div
               key={idx}

@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
-import { useSetRecoilState } from "recoil"; // Recoil state 설정을 위한 import
+import { useRecoilState, useSetRecoilState } from "recoil"; // Recoil state 설정을 위한 import
 import { useNavigate } from "react-router-dom"; // 페이지 이동을 위한 import
-import { productState } from "../recoil/state"; // productState import
+import { bottomState, productState } from "../recoil/state"; // productState import
 import MainBanner from "../assets/MainBanner.svg";
 import Korea from "../assets/Korea.webp";
 import USA from "../assets/USA.png";
@@ -25,7 +25,7 @@ export default function MainPage() {
   const [showModal, setShowModal] = useState(true);
   const [productList, setProductList] = useState([]);
   const { username } = useContext(UserContext);
-  const [isBotton, setIsBottom] = useRecoilState(bottomState);
+  const [isBottom, setIsBottom] = useRecoilState(bottomState);
 
   const setProduct = useSetRecoilState(productState); // Recoil state 설정을 위한 함수
   const navigate = useNavigate(); // 페이지 이동을 위한 함수
@@ -178,7 +178,7 @@ export default function MainPage() {
         <div className="space-y-2 mt-[3vh] overflow-y-auto h-[60vh]">
           {productList?.map((product, index) => {
             // product.chg 값에서 '%' 제거 및 float로 변환
-            const chgValue = parseFloat(product.chg.replace("%", ""));
+            const chgValue = parseFloat(product.chg?.replace("%", ""));
             let chgClass = "";
             console.log(chgValue);
 

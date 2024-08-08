@@ -22,13 +22,16 @@ import { chartState } from "../../recoil/state";
 import { initialData } from "./data";
 import { getCharts } from "../../apis/DetailApi";
 import Loading from "./Loading";
+import { useParams } from "react-router-dom";
 
 export default function ChartContainer({ nowPrice }) {
   const [isLoading, setIsLoading] = useState(true);
   const [chartData, setChartData] = useState([]);
 
+  const params = useParams();
+
   useEffect(() => {
-    const stockCode = "EUA";
+    const stockCode = params.productId;
     const getChart = async () => {
       try {
         const response = await getCharts(stockCode);
@@ -52,7 +55,7 @@ export default function ChartContainer({ nowPrice }) {
       return new Date(nDate);
     });
 
-  const height = window.innerHeight - 231;
+  const height = window.innerHeight - 244;
   const width = window.innerWidth;
   const margin = { left: 0, right: 48, top: 0, bottom: 24 };
 

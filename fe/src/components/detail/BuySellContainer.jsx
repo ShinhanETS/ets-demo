@@ -3,8 +3,14 @@ import ConfirmAlert from "./ConfirmAlert";
 import { buyStock, getCharts, sellStock } from "../../apis/DetailApi";
 import SimpleChart from "./SimpleChart";
 import Loading from "./Loading";
+import { useParams } from "react-router-dom";
 
-export default function BuySellContainer({ isBuy, price, tab }) {
+export default function BuySellContainer({
+  isBuy,
+  tab,
+  close,
+  currencySymbol,
+}) {
   const [amount, setAmount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -14,9 +20,12 @@ export default function BuySellContainer({ isBuy, price, tab }) {
   const [isLoading, setIsLoading] = useState(true);
   const [chartData, setChartData] = useState([]);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isSell, setIsSell] = useState(false);
+
+  const params = useParams();
 
   useEffect(() => {
-    const stockCode = "EUA";
+    const stockCode = params.productId;
     const getChart = async () => {
       try {
         const response = await getCharts(stockCode);
@@ -47,7 +56,7 @@ export default function BuySellContainer({ isBuy, price, tab }) {
     } else {
       setIsError(false);
       setValue(parsedValue);
-      setAmount(parsedValue * 9120);
+      setAmount(parsedValue * close);
     }
   };
 
@@ -58,7 +67,7 @@ export default function BuySellContainer({ isBuy, price, tab }) {
 
       if (response.data.order.status === "COMPLETED") {
         setMessage(
-          `${response.data.order.stock_code} ${response.data.trade.trade_quantity}주 (${response.data.trade.tradePrice}} 체결되었습니다.`
+          `${response.data.order.stock_code} ${response.data.trade.trade_quantity}주가 체결되었습니다.`
         );
         setIsSuccess(true);
         // submessage {response.data.order.stock_code} {response.data.trade.trade_quantity}주 ({response.data.trade.tradePrice}} 체결되었습니다.
@@ -68,6 +77,7 @@ export default function BuySellContainer({ isBuy, price, tab }) {
         // submessage {response.data.message}
       }
       setIsOpen(true);
+      setIsSell(false);
     } catch (error) {
       return;
     }
@@ -80,7 +90,7 @@ export default function BuySellContainer({ isBuy, price, tab }) {
 
       if (response.data.order.status === "COMPLETED") {
         setMessage(
-          `${response.data.order.stock_code} ${response.data.trade.trade_quantity}주 (${response.data.trade.tradePrice}} 판매되었습니다.`
+          `${response.data.order.stock_code} ${response.data.trade.trade_quantity}주가 판매되었습니다.`
         );
         setIsSuccess(true);
         // submessage
@@ -90,6 +100,7 @@ export default function BuySellContainer({ isBuy, price, tab }) {
         // submessage {response.data.message}
       }
       setIsOpen(true);
+      setIsSell(true);
     } catch (error) {
       return;
     }
@@ -104,9 +115,9 @@ export default function BuySellContainer({ isBuy, price, tab }) {
       setMessage("수량을 입력해주세요.");
     } else {
       const data = {
-        stock_code: "CKH25",
-        price: 9850.0,
-        quantity: 3,
+        stock_code: params.productId,
+        price: close,
+        quantity: value,
       };
       toBuyStock(data);
     }
@@ -120,9 +131,9 @@ export default function BuySellContainer({ isBuy, price, tab }) {
       setMessage("수량을 입력해주세요.");
     } else {
       const data = {
-        stock_code: "CKH25",
-        price: 9850.0,
-        quantity: 3,
+        stock_code: params.productId,
+        price: close,
+        quantity: value,
       };
       toSellStock(data);
     }
@@ -135,8 +146,9 @@ export default function BuySellContainer({ isBuy, price, tab }) {
         setIsOpen={setIsOpen}
         message={message}
         isSuccess={isSuccess}
+        isSell={isSell}
       />
-      <div className="z-10 h-[calc(100vh_-_231px)] flex flex-col pb-[1.4rem] gap-2 bg-white-1 overflow-x-hidden overflow-y-scroll">
+      <div className="z-10 h-[calc(100vh_-_244px)] flex flex-col pb-[1.4rem] gap-2 bg-white-1 overflow-x-hidden overflow-y-scroll">
         <div>
           {isLoading ? <Loading /> : <SimpleChart chartData={chartData} />}
         </div>
@@ -147,9 +159,10 @@ export default function BuySellContainer({ isBuy, price, tab }) {
               <div className="flex flex-col text-[0.9rem]">
                 <span>가격</span>
                 <div className="flex justify-end gap-1 border border-[#D9D9D9] px-3 py-[10px] rounded">
-                  {/* <span>{amount}</span> */}
-                  <span>9,120</span>
-                  <span>원</span>
+                  <span>
+                    {currencySymbol === "원" ? close.toLocaleString() : close}{" "}
+                    {currencySymbol}
+                  </span>
                 </div>
               </div>
               <div className="flex flex-col text-[0.9rem]">
@@ -165,7 +178,7 @@ export default function BuySellContainer({ isBuy, price, tab }) {
                 </div>
               </div>
               {isError && (
-                <span className="text-[0.8rem] text-red-1 text-end">
+                <span className="text-[0.9rem] text-red-1 text-end">
                   {message}
                 </span>
               )}

@@ -1,4 +1,10 @@
 import { atom } from "recoil";
+import { recoilPersist } from "recoil-persist";
+
+const { persistAtom } = recoilPersist({
+  key: "persist-atom-key",
+  storage: localStorage,
+});
 
 // 메인 페이지 탭 (국내, 해외, My거래)
 export const mainTabState = atom({
@@ -40,4 +46,5 @@ export const productState = atom({
     close: 9150.0,
     currencySymbol: "원",
   },
+  effects_UNSTABLE: [persistAtom],
 });
