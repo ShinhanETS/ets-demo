@@ -3,6 +3,7 @@ package com.pda.etsapplication.controller;
 import com.pda.apiutil.ApiUtil;
 import com.pda.apiutil.GlobalResponse;
 import com.pda.etsapplication.dto.OfferReqDto;
+import com.pda.etsapplication.dto.OfferTradeResDto;
 import com.pda.etsapplication.repository.PricesEntity;
 import com.pda.etsapplication.repository.StocksEntity;
 import com.pda.etsapplication.service.EtsService;
@@ -44,9 +45,12 @@ public class EtsController {
 
     // 주문(매수)
     @PostMapping("/stock/buy")
-    public GlobalResponse<StocksEntity> createOffer(@AuthInfo AuthUser authUser, @RequestBody OfferReqDto offerReqDto){
-        String offer = offerService.placeBuyOrder(offerReqDto, authUser.getId());
-        return null;
+    public GlobalResponse<OfferTradeResDto> createOffer(@AuthInfo AuthUser authUser, @RequestBody OfferReqDto offerReqDto){
+        OfferTradeResDto offer = offerService.placeBuyOrder(offerReqDto, authUser.getId());
+        if(offer.getOrder().getStatus().equals("FAILED")){
+            return ApiUtil.success("잔고 부족으로 주문 및 체결 실패", offer);
+        }
+        return ApiUtil.success("주문 및 체결 성공", offer);
     }
 }
 

@@ -1,8 +1,7 @@
 package com.pda.etsapplication.service;
 
 import com.pda.etsapplication.api.WebClientAPI;
-import com.pda.etsapplication.dto.AccountResDto;
-import com.pda.etsapplication.dto.OfferReqDto;
+import com.pda.etsapplication.dto.*;
 import com.pda.etsapplication.repository.*;
 import com.pda.exceptionutil.exceptions.CommonException;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,83 @@ public class OfferService {
 
     private final WebClientAPI webClientAPI;
 
-    public String placeBuyOrder(OfferReqDto offerReqDto, Long id) {
+    public OfferTradeResDto placeBuyOrder(OfferReqDto offerReqDto, Long id) {
+        // 0. 요청 들어옴(주문번호 생성, 주문날짜 생성)
+        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss"));
+        String offerNum = generateNumber("Ofr", date, offerReqDto.getStockCode(), id);
+        log.info("offer number = {}", offerNum);
+
+        // 1. 계좌 확인(id로)
+        AccountResDto account = getAccount(id);
+        log.info("get account = {}", account.getAcctNo());
+
+        // 2. 종목 정보 확인
+        StocksEntity stock = findByStockCode(offerReqDto.getStockCode());
+        log.info("stock info = {}, {}, {}", stock.getStockCode(), stock.getCountry(), stock.getDescription(), stock.getName());
+
+        // dto 주문 객체 생성
+        OfferOrderDto offerOrderDto =
+                OfferOrderDto.builder()
+                        .acctNo(account.getAcctNo())
+                        .stockCode(stock.getStockCode())
+                        .offerQuantity(offerReqDto.getQuantity())
+                        .offerDate(date.substring(0, 9))
+                        .type("buy")
+                        .offerNo(offerNum)
+                .build();
+
+        // 3. 잔고 확인(부족하면 주문상태 failed 처리 후 return) + 주문 상태 처리(PENDING / FAILED)
+        if(!checkBalance(stock,account,offerReqDto)){
+            log.info("잔고가 부족하여 failed 처리");
+            createOffer(id, date.substring(0, 9), offerNum, stock, account, offerReqDto, "buy","FAILED");
+
+
+            offerOrderDto.setStatus("FAILED");
+            OfferTradeDto offerTradeDto = OfferTradeDto.builder()
+                    .notTradeQuantity(offerReqDto.getQuantity())
+                    .tradeQuantity(0)
+                    .tradePrice(0.0)
+                    .build();
+
+
+            return OfferTradeResDto.builder()
+                    .order(offerOrderDto)
+                    .trade(offerTradeDto).build();
+        }else{
+            log.info("잔고 충분하여 주문 처리");
+            createOffer(id, date.substring(0, 9), offerNum, stock, account, offerReqDto,"buy","PENDING");
+
+        }
+
+        // 4. 체결 정보 저장
+        String tradeNum = generateNumber("Trd", date, offerReqDto.getStockCode(), id);
+        createTrade(id, tradeNum, offerNum, account.getAcctNo(), offerReqDto);
+
+        // 5. 계좌 잔고 업데이트
+        updateAccount(stock);
+
+        // 6. 주문 상태 업데이트
+        updateOffer(offerNum, offerReqDto.getQuantity());
+
+        // 7. 체결 정보, 주문 정보 return
+        offerOrderDto.setStatus("COMPLETED");
+        OfferTradeDto offerTradeDto = OfferTradeDto.builder()
+                .tradeNo(tradeNum)
+                .tradeQuantity(offerReqDto.getQuantity())
+                .notTradeQuantity(0)
+                .tradePrice(offerReqDto.getPrice() * offerReqDto.getQuantity())
+                .build();
+
+
+        return OfferTradeResDto.builder()
+                .order(offerOrderDto)
+                .trade(offerTradeDto).build();
+
+        // 8. 멤버십 정보 업데이트()
+
+    }
+
+    public String placeSellOrder(OfferReqDto offerReqDto, Long id){
         // 0. 요청 들어옴(주문번호 생성, 주문날짜 생성)
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss"));
         String offerNum = generateNumber("Ofr", date, offerReqDto.getStockCode(), id);
@@ -62,14 +137,6 @@ public class OfferService {
 
         // 7. 체결 정보, 주문 정보 return
         return "성공이욤";
-
-        // 8. 멤버십 정보 업데이트(kafka)
-
-    }
-
-    public String placeSellOrder(){
-
-        return null;
     }
 
     // 주문번호 / 체결번호 생성
