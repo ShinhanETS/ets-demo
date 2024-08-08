@@ -6,7 +6,7 @@ import Europe from '../assets/Europe.png';
 import China from '../assets/China.png';
 import MainButton from '../components/main/MainButton';
 import MainModal from '../components/main/MainModal'; 
-
+import { fetchMembership } from '../apis/MembershipApi';
 
 export default function MainPage() {
     const [selectedTab, setSelectedTab] = useState(0);
