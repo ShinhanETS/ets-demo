@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "flowbite-react"
 
 export default function LandingPage() {
-
   const navigate = useNavigate()
 
   const handleLoginClick=()=>{
