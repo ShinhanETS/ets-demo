@@ -186,9 +186,9 @@ export default function BuySellContainer({
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <div className="flex justify-between text-[1rem]">
+            <div className="flex justify-between text-[1.1rem]">
               <span>총 금액</span>
-              <span>{amount.toLocaleString()}원</span>
+              <span>{amount.toLocaleString()} {currencySymbol}</span>
             </div>
             {isBuy ? (
               <div

@@ -11,16 +11,6 @@ export default defineConfig(({ mode }) => {
           target: env.VITE_BASE_URL,
           changeOrigin: true,
         },
-        "/real": {
-          target: env.VITE_REAL_URL,
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/real/, ""),
-        },
-        "/test": {
-          target: env.VITE_TEST_URL,
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/test/, ""),
-        },
       },
     },
   };
