@@ -84,12 +84,7 @@ public class HoldingService {
             .orElseThrow(() -> CommonException.create("현재 계좌가 없음"));
 
         log.info("put holding 시작");
-        Double totalPrice = 0D;
-        if (putHoldingDto.isMinus()) {
-            totalPrice += putHoldingDto.getNowPrice()*putHoldingDto.getQuantity();
-        } else {
-            totalPrice -= putHoldingDto.getNowPrice()*putHoldingDto.getQuantity();
-        }
+        Double totalPrice = putHoldingDto.getNowPrice()*putHoldingDto.getQuantity();
 
         // FIXME: 일단 totalPrice를 어디에서 쓰는지...
         if (putHoldingDto.getCountry().equals(0)) {
