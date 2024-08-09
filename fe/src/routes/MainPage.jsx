@@ -222,7 +222,10 @@ export default function MainPage() {
             </div>
           ) : (
             productList?.map((product, index) => {
-              const chgValue = parseFloat(product.chg?.replace("%", ""));
+              const chgValue =
+                selectedTab === 2
+                  ? parseFloat(product?.current_price?.chg?.replace("%", ""))
+                  : parseFloat(product.chg?.replace("%", ""));
               let chgClass = "";
 
               if (chgValue === 0.0) {
@@ -241,26 +244,46 @@ export default function MainPage() {
                 >
                   <div className="flex gap-4 items-center">
                     <img
-                      src={imageMapping[product?.name]}
+                      src={
+                        imageMapping[
+                          selectedTab === 2
+                            ? product?.current_price?.name
+                            : product?.name
+                        ]
+                      }
                       alt=""
                       className="rounded-full w-12 h-12"
                     />
                     <div className="flex flex-col gap-1 justify-between">
-                      <h3 className="font-semibold">{product.name}</h3>
+                      <h3 className="font-semibold">
+                        {selectedTab === 2
+                          ? product?.current_price?.name
+                          : product?.name}
+                      </h3>
                       <p className="text-[#666666] font-medium text-sm">
-                        {product.description}
+                        {selectedTab === 2
+                          ? product?.current_price?.description
+                          : product?.description}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className={`text-lg font-semibold ${chgClass}`}>
-                      {product.chg}
+                      {selectedTab === 2
+                        ? product?.current_price?.chg
+                        : product?.chg}
                     </p>
                     <p className="text-[1rem] text-black-1 text-nowrap">
-                      {product.currencySymbol === "원"
-                        ? product.close.toLocaleString()
-                        : product.close}
-                      {product.currencySymbol}
+                      {selectedTab === 2
+                        ? product?.current_price?.currency_symbol === "원"
+                          ? product?.current_price?.close.toLocaleString() +
+                            product?.current_price?.currency_symbol
+                          : product?.current_price?.close +
+                            product?.current_price?.currency_symbol
+                        : product?.currencySymbol === "원"
+                        ? product?.close.toLocaleString() +
+                          product?.currencySymbol
+                        : product?.close + product?.currencySymbol}
                     </p>
                   </div>
                 </div>
