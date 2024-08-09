@@ -279,8 +279,9 @@ public class OfferService {
                 .stockCode(stock.getStockCode())
                 .stockType(stock.getSector())
                 .nowPrice(nowPrice)
-                .country(stock.getCountry())
+                .currency(stock.getCurrency())
                 .quantity(quantity)
+                .country(stock.getCountry())
             .build());
     }
 

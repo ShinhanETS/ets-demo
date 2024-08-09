@@ -16,6 +16,7 @@ public class PutHoldingDto {
     private String trType;
     private Integer quantity;
     private Double nowPrice;
-    private Integer country;
+    private String currency;
     private String stockType;
+    private Integer country;
 }

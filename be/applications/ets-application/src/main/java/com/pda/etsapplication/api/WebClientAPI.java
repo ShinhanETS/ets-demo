@@ -71,8 +71,9 @@ public class WebClientAPI {
         body.put("trType", putHoldingDto.getTrType());
         body.put("quantity", putHoldingDto.getQuantity());
         body.put("nowPrice", putHoldingDto.getNowPrice());
-        body.put("country", putHoldingDto.getCountry());
+        body.put("currency", putHoldingDto.getCurrency());
         body.put("stockType", putHoldingDto.getStockType());
+        body.put("country", putHoldingDto.getCountry());
 
         Mono<GlobalResponse<Void>> mono = webClient.put().uri(accountUrl+"/api/accounts/holdings")
             .header("Authorization", "Bearer " + authUser.getToken())
