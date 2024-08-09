@@ -103,8 +103,13 @@ export default function MainPage() {
 
   // Product 클릭 시 상세 페이지로 이동
   const handleProductClick = (product) => {
-    setProduct(product); // 클릭한 product를 Recoil state에 설정
-    navigate(`/detail/${product.stockCode}`); // 상세 페이지로 이동
+    if (selectedTab === 2) {
+      navigate(`/detail/${product.stock_code}`); // 상세 페이지로 이동
+      setProduct(product.current_price); // 클릭한 product를 Recoil state에 설정
+    } else {
+      navigate(`/detail/${product.stockCode}`); // 상세 페이지로 이동
+      setProduct(product); // 클릭한 product를 Recoil state에 설정
+    }
   };
 
   return (

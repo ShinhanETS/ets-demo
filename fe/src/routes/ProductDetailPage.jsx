@@ -17,7 +17,7 @@ export default function ProductDetail() {
   const [isBottom, setIsBottom] = useRecoilState(bottomState);
   const detailData = useRecoilState(productState);
   let { name, description, currencySymbol, close, chg } = detailData[0];
-
+  console.log(detailData)
   useEffect(() => {
     setIsBottom(false);
   }, []);
