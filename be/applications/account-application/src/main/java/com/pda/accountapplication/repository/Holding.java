@@ -25,7 +25,7 @@ public class Holding {
     private Account account; // 계좌번호
 
     @Column(name = "user_id", nullable = false)
-    private Long id; // id
+    private Long userId; // id
 
     @Column(name = "quantity")
     private Long quantity; // 수량
