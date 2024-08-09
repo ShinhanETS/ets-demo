@@ -85,7 +85,7 @@ public class HoldingService {
 
         log.info("put holding 시작");
         Double totalPrice = putHoldingDto.getNowPrice()*putHoldingDto.getQuantity();
-
+        log.info("holdings info: "+putHoldingDto.toString());
         // FIXME: 일단 totalPrice를 어디에서 쓰는지...
         if (putHoldingDto.getCountry().equals(0)) {
             account.setWon(putHoldingDto.isMinus()?account.getWon()-totalPrice:account.getWon()+totalPrice);

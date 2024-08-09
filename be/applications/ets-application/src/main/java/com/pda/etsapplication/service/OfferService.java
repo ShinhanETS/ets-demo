@@ -109,7 +109,7 @@ public class OfferService {
             .totalKRWAmount(myCurrentDto.getStockAmount().doubleValue())
             .totalTradeAmount(myCurrentDto.getOfferAmount())
             .tradeDate(LocalDateTime.now())
-            .tradeType("매도")
+            .tradeType("매수")
             .build());
 
         return OfferTradeResDto.builder()
@@ -135,6 +135,8 @@ public class OfferService {
         StocksEntity stock = findByStockCode(offerReqDto.getStockCode());
         log.info("stock info = {}, {}, {}", stock.getStockCode(), stock.getCountry(), stock.getDescription(), stock.getName());
 
+
+        // 매수했는데 돈이 오름
         // dto 주문 객체 생성
         OfferOrderDto offerOrderDto =
                 OfferOrderDto.builder()
@@ -177,7 +179,7 @@ public class OfferService {
             .totalKRWAmount(myCurrentDto.getStockAmount().doubleValue())
             .totalTradeAmount(myCurrentDto.getOfferAmount())
             .tradeDate(LocalDateTime.now())
-            .tradeType("매수")
+            .tradeType("매도")
             .build());
 
         // 7. 체결 정보, 주문 정보 return
