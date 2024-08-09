@@ -4,12 +4,17 @@ import com.pda.etsapplication.api.WebClientAPI;
 import com.pda.etsapplication.dto.*;
 import com.pda.etsapplication.repository.*;
 import com.pda.exceptionutil.exceptions.CommonException;
+import com.pda.jwtutil.auth.AuthUser;
+import com.pda.kafkautil.KafkaJson;
+import com.pda.kafkautil.TradeKafkaDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -21,10 +26,13 @@ public class OfferService {
     private final OfferRepository offerRepository;
 
     private final TradeRepository tradeRepository;
+    private final PricesRepository pricesRepository;
 
     private final WebClientAPI webClientAPI;
+    private final KafkaTemplate<String, KafkaJson> kafkaTemplate;
 
-    public OfferTradeResDto placeBuyOrder(OfferReqDto offerReqDto, Long id) {
+    public OfferTradeResDto placeBuyOrder(OfferReqDto offerReqDto, AuthUser authUser) {
+        Long id = authUser.getId();
         // 0. 요청 들어옴(주문번호 생성, 주문날짜 생성)
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss"));
         String offerNum = generateNumber("Ofr", date, offerReqDto.getStockCode(), id);
@@ -77,7 +85,7 @@ public class OfferService {
         createTrade(id, tradeNum, offerNum, account.getAcctNo(), offerReqDto);
 
         // 5. 계좌 잔고 업데이트
-        updateAccount(stock);
+        updateAccount(authUser, stock, false, offerReqDto.getPrice(), offerReqDto.getQuantity());
 
         // 6. 주문 상태 업데이트
         updateOffer(offerNum, offerReqDto.getQuantity());
@@ -91,6 +99,18 @@ public class OfferService {
                 .tradePrice(offerReqDto.getPrice() * offerReqDto.getQuantity())
                 .build();
 
+        MyCurrentDto myCurrentDto = getMyCurrent(authUser);
+        kafkaTemplate.send("update-trade", TradeKafkaDto.builder()
+            .userId(authUser.getId())
+            .price(offerReqDto.getPrice())
+            .quantity(offerReqDto.getQuantity())
+            .stockCode(stock.getStockCode())
+            .stockName(stock.getName())
+            .totalKRWAmount(myCurrentDto.getStockAmount().doubleValue())
+            .totalTradeAmount(myCurrentDto.getOfferAmount())
+            .tradeDate(LocalDateTime.now())
+            .tradeType("매수")
+            .build());
 
         return OfferTradeResDto.builder()
                 .order(offerOrderDto)
@@ -100,7 +120,8 @@ public class OfferService {
 
     }
 
-    public OfferTradeResDto placeSellOrder(OfferReqDto offerReqDto, Long id){
+    public OfferTradeResDto placeSellOrder(OfferReqDto offerReqDto, AuthUser authUser){
+        Long id = authUser.getId();
         // 0. 요청 들어옴(주문번호 생성, 주문날짜 생성)
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss"));
         String offerNum = generateNumber("Ofr", date, offerReqDto.getStockCode(), id);
@@ -114,6 +135,8 @@ public class OfferService {
         StocksEntity stock = findByStockCode(offerReqDto.getStockCode());
         log.info("stock info = {}, {}, {}", stock.getStockCode(), stock.getCountry(), stock.getDescription(), stock.getName());
 
+
+        // 매수했는데 돈이 오름
         // dto 주문 객체 생성
         OfferOrderDto offerOrderDto =
                 OfferOrderDto.builder()
@@ -133,7 +156,7 @@ public class OfferService {
         createTrade(id, tradeNum, offerNum, account.getAcctNo(), offerReqDto);
 
         // 5. 계좌 잔고 업데이트
-        updateAccount(stock);
+        updateAccount(authUser, stock, true, offerReqDto.getPrice(), offerReqDto.getQuantity());
 
         // 6. 주문 상태 업데이트
         updateOffer(offerNum, offerReqDto.getQuantity());
@@ -145,6 +168,19 @@ public class OfferService {
                 .notTradeQuantity(0)
                 .tradePrice(offerReqDto.getPrice() * offerReqDto.getQuantity())
                 .build();
+
+        MyCurrentDto myCurrentDto = getMyCurrent(authUser);
+        kafkaTemplate.send("update-trade", TradeKafkaDto.builder()
+            .userId(authUser.getId())
+            .price(offerReqDto.getPrice())
+            .quantity(offerReqDto.getQuantity())
+            .stockCode(stock.getStockCode())
+            .stockName(stock.getName())
+            .totalKRWAmount(myCurrentDto.getStockAmount().doubleValue())
+            .totalTradeAmount(myCurrentDto.getOfferAmount())
+            .tradeDate(LocalDateTime.now())
+            .tradeType("매도")
+            .build());
 
         // 7. 체결 정보, 주문 정보 return
         return OfferTradeResDto.builder()
@@ -236,7 +272,51 @@ public class OfferService {
         log.info("저장완.");
     }
 
-    public void updateAccount(StocksEntity stock){
+    public void updateAccount(AuthUser authUser, StocksEntity stock, boolean isMinus, Double nowPrice, Integer quantity){
         // webClient 요청
+        webClientAPI.putHolding(authUser, PutHoldingDto.builder()
+                .trType(isMinus?"매도":"매수")
+                .stockCode(stock.getStockCode())
+                .stockType(stock.getSector())
+                .nowPrice(nowPrice)
+                .country(stock.getCountry())
+                .quantity(quantity)
+            .build());
+    }
+
+    public MyCurrentDto getMyCurrent(AuthUser authUser) {
+        List<Offer> offers = offerRepository.findAllByStatusAndOfferDateStartsWithAndId("COMPLETED", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMM")), authUser.getId());
+        Double offerAmount = 0D;
+        // 0 : 한국, 1 : 유럽, 2 : 중국, 3 : 미국
+        for (Offer offer : offers) {
+            if (offer.getStocks().getCountry().equals(0)) {
+                offerAmount += offer.getPrice();
+            } else if (offer.getStocks().getCountry().equals(1)) {
+                offerAmount += offer.getPrice()*1500d;
+            } else if (offer.getStocks().getCountry().equals(2)) {
+                offerAmount += offer.getPrice()*200d;
+            } else if (offer.getStocks().getCountry().equals(3)) {
+                offerAmount += offer.getPrice()*1300d;
+            }
+        }
+
+        Double stockAmount = 0D;
+        List<HoldingDto> holdings = webClientAPI.getHoldings(authUser.getToken());
+        for(HoldingDto holding: holdings) {
+            PricesEntity price = pricesRepository.findByStockCodeByCurrent(holding.getStockCode());
+            if (holding.getCountry().equals(0)) {
+                stockAmount += price.getClose()*holding.getQuantity();
+            } else if (holding.getCountry().equals(1)) {
+                stockAmount += price.getClose()*holding.getQuantity()*1500d;
+            } else if (holding.getCountry().equals(2)) {
+                stockAmount += price.getClose()*holding.getQuantity()*200d;
+            } else if (holding.getCountry().equals(3)) {
+                stockAmount += price.getClose()*holding.getQuantity()*1300d;
+            }
+        }
+        return MyCurrentDto.builder()
+            .offerAmount(offerAmount.longValue())
+            .stockAmount(stockAmount.longValue())
+            .build();
     }
 }

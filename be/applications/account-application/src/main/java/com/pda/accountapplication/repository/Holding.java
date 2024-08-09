@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 @Table(name = "holdings")
+@Setter
 public class Holding {
 
     @Id
@@ -22,7 +24,7 @@ public class Holding {
     @JoinColumn(name = "acct_no", referencedColumnName = "acct_no")
     private Account account; // 계좌번호
 
-    @Column(name = "id", nullable = false)
+    @Column(name = "user_id", nullable = false)
     private Long id; // id
 
     @Column(name = "quantity")

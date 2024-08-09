@@ -24,6 +24,6 @@ public class TradeKafkaDto implements KafkaJson {
     private String stockCode; // 종목코드
     private String stockName; // 종목명
     private String tradeType; // 체결타입(매수/매도)
-    private Integer totalTradeAmount; // 이번달 거래내역 수
+    private Long totalTradeAmount; // 이번달 거래내역 수
     private Double totalKRWAmount; // 보유현황 -> 원화로 환산
 }

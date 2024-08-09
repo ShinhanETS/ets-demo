@@ -14,5 +14,8 @@ project(":applications:ets-application") {
         implementation project(':utils:api-util')
         implementation project(':utils:exception-util')
         implementation project(':utils:jwt-util')
+        implementation 'org.springframework.kafka:spring-kafka'
+
+        implementation project(':utils:kafka-util')
     }
 }

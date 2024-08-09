@@ -19,7 +19,9 @@ spring:
     url: jdbc:mysql://localhost:3312/ets-db?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
     username: root
     password: root
-
+  kafka:
+    producer:
+      bootstrap-servers: localhost:10000,localhost:10001,localhost:10002
   jpa:
     hibernate:
       ddl-auto: create
