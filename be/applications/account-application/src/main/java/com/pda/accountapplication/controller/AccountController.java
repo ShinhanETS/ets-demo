@@ -76,7 +76,7 @@ public class AccountController {
     @Authenticated
     @GetMapping("/holdings/ets")
     public GlobalResponse<List<HoldingDto>> getETSHoldings(@AuthInfo AuthUser authUser){
-        List<HoldingDto> holdingDtoList = holdingService.getHoldingListbyStockType(authUser.getId(), "ets");
+        List<HoldingDto> holdingDtoList = holdingService.getHoldingListbyStockType(authUser.getId(), "CERs");
         return ApiUtil.success("성공", holdingDtoList);
     }
 
@@ -84,7 +84,7 @@ public class AccountController {
     @Authenticated
     @GetMapping("/holdings/futures")
     public GlobalResponse<List<HoldingDto>> getFutureHoldings(@AuthInfo AuthUser authUser){
-        List<HoldingDto> holdingDtoList = holdingService.getHoldingListbyStockType(authUser.getId(), "future");
+        List<HoldingDto> holdingDtoList = holdingService.getHoldingListbyStockType(authUser.getId(), "FUTURE");
         return ApiUtil.success("성공", holdingDtoList);
     }
 
@@ -92,7 +92,7 @@ public class AccountController {
     @Authenticated
     @GetMapping("/holdings/etn")
     public GlobalResponse<List<HoldingDto>> getETNHoldings(@AuthInfo AuthUser authUser){
-        List<HoldingDto> holdingDtoList = holdingService.getHoldingListbyStockType(authUser.getId(), "etn");
+        List<HoldingDto> holdingDtoList = holdingService.getHoldingListbyStockType(authUser.getId(), "ETN");
         return ApiUtil.success("성공", holdingDtoList);
     }
 
@@ -100,7 +100,7 @@ public class AccountController {
     @Authenticated
     @GetMapping("/holdings/etf")
     public GlobalResponse<List<HoldingDto>> getETFHoldings(@AuthInfo AuthUser authUser){
-        List<HoldingDto> holdingDtoList = holdingService.getHoldingListbyStockType(authUser.getId(), "etf");
+        List<HoldingDto> holdingDtoList = holdingService.getHoldingListbyStockType(authUser.getId(), "ETF");
         return ApiUtil.success("성공", holdingDtoList);
     }
 
