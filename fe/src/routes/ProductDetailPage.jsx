@@ -14,18 +14,13 @@ export default function ProductDetail() {
   const { productId } = useParams();
   const options = ["상품개요", "차트", "매수", "매도", "관련기사"];
   const [tab, setTab] = useState(0);
-  const [isBotton, setIsBottom] = useRecoilState(bottomState);
+  const [isBottom, setIsBottom] = useRecoilState(bottomState);
   const detailData = useRecoilState(productState);
   let { name, description, currencySymbol, close, chg } = detailData[0];
 
   useEffect(() => {
-    if (tab === 4) {
-      setIsBottom(true);
-    } else {
-      setIsBottom(false);
-    }
-  }, [tab]);
-  console.log(detailData);
+    setIsBottom(false);
+  }, []);
 
   return (
     <div className="h-full bg-white-1">

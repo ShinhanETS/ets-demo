@@ -103,7 +103,6 @@ export default function MainPage() {
 
   // Product 클릭 시 상세 페이지로 이동
   const handleProductClick = (product) => {
-    console.log(product);
     setProduct(product); // 클릭한 product를 Recoil state에 설정
     navigate(`/detail/${product.stockCode}`); // 상세 페이지로 이동
   };

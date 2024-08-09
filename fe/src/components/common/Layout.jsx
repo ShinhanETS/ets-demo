@@ -127,7 +127,7 @@ export default function Layout() {
                     보유 평가액
                   </p>
                   <p className="text-lg font-bold">
-                    {totalProduct?.stockAmount}원
+                    {totalProduct?.stockAmount?.toLocaleString()}원
                   </p>
                 </div>
               </div>
