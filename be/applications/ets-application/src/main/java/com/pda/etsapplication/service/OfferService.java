@@ -275,7 +275,7 @@ public class OfferService {
     public void updateAccount(AuthUser authUser, StocksEntity stock, boolean isMinus, Double nowPrice, Integer quantity){
         // webClient 요청
         webClientAPI.putHolding(authUser, PutHoldingDto.builder()
-                .isMinus(isMinus)
+                .trType(isMinus?"매도":"매수")
                 .stockCode(stock.getStockCode())
                 .stockType(stock.getSector())
                 .nowPrice(nowPrice)

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PutHoldingDto {
     private String stockCode;
-    private boolean isMinus;
+    private String trType;
     private Integer quantity;
     private Double nowPrice;
     private Integer country;

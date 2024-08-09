@@ -88,7 +88,7 @@ public class HoldingService {
         log.info("holdings info: "+putHoldingDto.toString());
         // FIXME: 일단 totalPrice를 어디에서 쓰는지...
         if (putHoldingDto.getCountry().equals(0)) {
-            account.setWon(putHoldingDto.isMinus()?account.getWon()+totalPrice:account.getWon()-totalPrice);
+            account.setWon(putHoldingDto.getTrType().equals("매도")?account.getWon()+totalPrice:account.getWon()-totalPrice);
             accountRepository.save(account);
             Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
@@ -104,7 +104,7 @@ public class HoldingService {
                       .totalPrice(putHoldingDto.getNowPrice()* putHoldingDto.getQuantity())
                       .country(putHoldingDto.getCountry())
                   .build());
-            } else if (putHoldingDto.isMinus()) {
+            } else if (putHoldingDto.getTrType().equals("매도")) {
                 log.info("put holding 1-2");
                 holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
@@ -117,7 +117,7 @@ public class HoldingService {
                 holdingRepository.save(holding);
             }
         } else if (putHoldingDto.getCountry().equals(1)) {
-            account.setEuro(putHoldingDto.isMinus()?account.getEuro()+totalPrice:account.getEuro()-totalPrice);
+            account.setEuro(putHoldingDto.getTrType().equals("매도")?account.getEuro()+totalPrice:account.getEuro()-totalPrice);
             accountRepository.save(account);
 
             Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
@@ -133,7 +133,7 @@ public class HoldingService {
                     .totalPrice(putHoldingDto.getNowPrice()* putHoldingDto.getQuantity())
                     .country(putHoldingDto.getCountry())
                     .build());
-            } else if (putHoldingDto.isMinus()) {
+            } else if (putHoldingDto.getTrType().equals("매도")) {
                 log.info("put holding 2-2");
                 holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
@@ -146,7 +146,7 @@ public class HoldingService {
                 holdingRepository.save(holding);
             }
         } else if (putHoldingDto.getCountry().equals(2)) {
-            account.setYuan(putHoldingDto.isMinus()?account.getYuan()+totalPrice:account.getYuan()-totalPrice);
+            account.setYuan(putHoldingDto.getTrType().equals("매도")?account.getYuan()+totalPrice:account.getYuan()-totalPrice);
             accountRepository.save(account);
             Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
@@ -161,7 +161,7 @@ public class HoldingService {
                     .totalPrice(putHoldingDto.getNowPrice()* putHoldingDto.getQuantity())
                     .country(putHoldingDto.getCountry())
                     .build());
-            } else if (putHoldingDto.isMinus()) {
+            } else if (putHoldingDto.getTrType().equals("매도")) {
                 log.info("put holding 3-2");
                 holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
@@ -174,7 +174,7 @@ public class HoldingService {
                 holdingRepository.save(holding);
             }
         } else if (putHoldingDto.getCountry().equals(3)) {
-            account.setDollar(putHoldingDto.isMinus()?account.getDollar()-totalPrice:account.getDollar()+totalPrice);
+            account.setDollar(putHoldingDto.getTrType().equals("매도")?account.getDollar()-totalPrice:account.getDollar()+totalPrice);
             accountRepository.save(account);
             Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
@@ -188,7 +188,7 @@ public class HoldingService {
                     .totalPrice(putHoldingDto.getNowPrice()* putHoldingDto.getQuantity())
                     .country(putHoldingDto.getCountry())
                     .build());
-            } else if (putHoldingDto.isMinus()) {
+            } else if (putHoldingDto.getTrType().equals("매도")) {
                 holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
                 if (holding.getQuantity() <= 0) {
