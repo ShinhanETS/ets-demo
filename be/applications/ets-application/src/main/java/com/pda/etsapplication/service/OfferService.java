@@ -206,22 +206,22 @@ public class OfferService {
     }
 
     public Boolean checkBalance(StocksEntity stock, AccountResDto account, OfferReqDto offerReqDto){
-        Integer country = stock.getCountry(); // 0 : 한국, 1 : 유럽, 2 : 중국, 3 : 미국
+        String currency = stock.getCurrency(); // 0 : 한국, 1 : 유럽, 2 : 중국, 3 : 미국
         Double offerReqPrice = offerReqDto.getQuantity() * offerReqDto.getPrice();
 
-        if(country == 0){
+        if(currency.equals("원")){
             if( account.getWon() >= offerReqPrice){
                 return true;
             }
-        } else if (country == 1) {
+        } else if (currency.equals("유로")) {
             if( account.getEuro() >= offerReqPrice){
                 return true;
             }
-        }else if (country == 2) {
+        }else if (currency.equals("위안")) {
             if( account.getYuan() >= offerReqPrice){
                 return true;
             }
-        }else if (country == 3) {
+        }else if (currency.equals("달러")) {
             if( account.getDollar() >= offerReqPrice){
                 return true;
             }
