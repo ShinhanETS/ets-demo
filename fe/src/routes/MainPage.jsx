@@ -286,7 +286,7 @@ export default function MainPage() {
                           : product?.current_price?.close +
                             product?.current_price?.currency_symbol
                         : product?.currencySymbol === "원"
-                        ? product?.close.toLocaleString() +
+                        ? product?.close?.toLocaleString() +
                           product?.currencySymbol
                         : product?.close + product?.currencySymbol}
                     </p>
