@@ -303,6 +303,13 @@ export default function MainPage() {
                               ? product?.close.toLocaleString() +
                                 product?.currencySymbol
                               : product?.close + product?.currencySymbol}
+                              {selectedTab === 2 && 
+                                <span className="font-semibold">
+                                  {' '}
+                                {product?.quantity}{'주'}
+                              </span>
+                              }
+
                           </p>
                         </div>
                       </div>
