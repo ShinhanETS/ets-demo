@@ -68,7 +68,7 @@ public class WebClientAPI {
     public void putHolding(AuthUser authUser, PutHoldingDto putHoldingDto) {
         Map<String, Object> body = new HashMap<>();
         body.put("stockCode", putHoldingDto.getStockCode());
-        body.put("isMinus", putHoldingDto.isMinus());
+        body.put("minus", putHoldingDto.isMinus());
         body.put("quantity", putHoldingDto.getQuantity());
         body.put("nowPrice", putHoldingDto.getNowPrice());
         body.put("country", putHoldingDto.getCountry());

@@ -88,7 +88,7 @@ public class HoldingService {
         log.info("holdings info: "+putHoldingDto.toString());
         // FIXME: 일단 totalPrice를 어디에서 쓰는지...
         if (putHoldingDto.getCountry().equals(0)) {
-            account.setWon(putHoldingDto.isMinus()?account.getWon()-totalPrice:account.getWon()+totalPrice);
+            account.setWon(putHoldingDto.isMinus()?account.getWon()+totalPrice:account.getWon()-totalPrice);
             accountRepository.save(account);
             Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
@@ -108,13 +108,16 @@ public class HoldingService {
                 log.info("put holding 1-2");
                 holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
+                if (holding.getQuantity() <= 0) {
+                    holdingRepository.delete(holding);
+                }
             } else {
                 log.info("put holding 1-3");
-                holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
+                holding.setQuantity(holding.getQuantity() + putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
             }
         } else if (putHoldingDto.getCountry().equals(1)) {
-            account.setEuro(putHoldingDto.isMinus()?account.getEuro()-totalPrice:account.getEuro()+totalPrice);
+            account.setEuro(putHoldingDto.isMinus()?account.getEuro()+totalPrice:account.getEuro()-totalPrice);
             accountRepository.save(account);
 
             Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
@@ -134,13 +137,16 @@ public class HoldingService {
                 log.info("put holding 2-2");
                 holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
+                if (holding.getQuantity() <= 0) {
+                    holdingRepository.delete(holding);
+                }
             } else {
                 log.info("put holding 2-3");
-                holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
+                holding.setQuantity(holding.getQuantity() + putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
             }
         } else if (putHoldingDto.getCountry().equals(2)) {
-            account.setYuan(putHoldingDto.isMinus()?account.getYuan()-totalPrice:account.getYuan()+totalPrice);
+            account.setYuan(putHoldingDto.isMinus()?account.getYuan()+totalPrice:account.getYuan()-totalPrice);
             accountRepository.save(account);
             Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
@@ -159,9 +165,12 @@ public class HoldingService {
                 log.info("put holding 3-2");
                 holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
+                if (holding.getQuantity() <= 0) {
+                    holdingRepository.delete(holding);
+                }
             } else {
                 log.info("put holding 3-3");
-                holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
+                holding.setQuantity(holding.getQuantity() + putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
             }
         } else if (putHoldingDto.getCountry().equals(3)) {
@@ -182,8 +191,11 @@ public class HoldingService {
             } else if (putHoldingDto.isMinus()) {
                 holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
+                if (holding.getQuantity() <= 0) {
+                    holdingRepository.delete(holding);
+                }
             } else {
-                holding.setQuantity(holding.getQuantity() - putHoldingDto.getQuantity());
+                holding.setQuantity(holding.getQuantity() + putHoldingDto.getQuantity());
                 holdingRepository.save(holding);
             }
         }
