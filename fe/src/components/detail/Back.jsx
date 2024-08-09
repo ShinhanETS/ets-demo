@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import BackImg from '../../assets/back.svg';
+import BackImg from "../../assets/back.svg";
 
 export default function Back() {
   const navigate = useNavigate();
   const navigateHome = () => {
-    navigate("/");
+    window.history.go(-1);
   };
 
   return (
