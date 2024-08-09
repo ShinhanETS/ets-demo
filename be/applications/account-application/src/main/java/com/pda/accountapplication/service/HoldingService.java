@@ -30,7 +30,7 @@ public class HoldingService {
     private final WebClientAPI webClientAPI;
 
     public List<HoldingDto> getHoldingList(Long id){
-        List<Holding> holdings = holdingRepository.findAllById(id);
+        List<Holding> holdings = holdingRepository.findAllByUserId(id);
         return holdings.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -38,7 +38,7 @@ public class HoldingService {
 
     public List<HoldingDto> getHoldingListbyStockType(Long id, String type) {
         log.info("보유종목조회 = {}, {}", id, type);
-        List<Holding> holdings = holdingRepository.findAllByIdAndType(id, type);
+        List<Holding> holdings = holdingRepository.findAllByUserIdAndType(id, type);
         List<HoldingDto> holdingDtos = holdings.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -61,7 +61,7 @@ public class HoldingService {
 
 
     public SellQuantityDto getSellQuantity(Long id, String stockCode) {
-        Optional<Holding> holding = holdingRepository.findByIdAndStockCode(id, stockCode);
+        Optional<Holding> holding = holdingRepository.findByUserIdAndStockCode(id, stockCode);
 
         if(!holding.isEmpty()){
             return SellQuantityDto.builder()
@@ -90,7 +90,7 @@ public class HoldingService {
         if (putHoldingDto.getCountry().equals(0)) {
             account.setWon(putHoldingDto.getTrType().equals("매도")?account.getWon()+totalPrice:account.getWon()-totalPrice);
             accountRepository.save(account);
-            Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
+            Holding holding = holdingRepository.findByUserIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
             if (holding == null) {
                 log.info("put holding 1-1");
@@ -100,7 +100,7 @@ public class HoldingService {
                       .type(putHoldingDto.getStockType())
                       .stockCode(putHoldingDto.getStockCode())
                       .quantity(putHoldingDto.getQuantity().longValue())
-                      .id(authUser.getId())
+                      .userId(authUser.getId())
                       .totalPrice(putHoldingDto.getNowPrice()* putHoldingDto.getQuantity())
                       .country(putHoldingDto.getCountry())
                   .build());
@@ -120,7 +120,7 @@ public class HoldingService {
             account.setEuro(putHoldingDto.getTrType().equals("매도")?account.getEuro()+totalPrice:account.getEuro()-totalPrice);
             accountRepository.save(account);
 
-            Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
+            Holding holding = holdingRepository.findByUserIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
             if (holding == null) {
                 log.info("put holding 2-1");
@@ -129,7 +129,7 @@ public class HoldingService {
                     .type(putHoldingDto.getStockType())
                     .stockCode(putHoldingDto.getStockCode())
                     .quantity(putHoldingDto.getQuantity().longValue())
-                    .id(authUser.getId())
+                    .userId(authUser.getId())
                     .totalPrice(putHoldingDto.getNowPrice()* putHoldingDto.getQuantity())
                     .country(putHoldingDto.getCountry())
                     .build());
@@ -148,7 +148,7 @@ public class HoldingService {
         } else if (putHoldingDto.getCountry().equals(2)) {
             account.setYuan(putHoldingDto.getTrType().equals("매도")?account.getYuan()+totalPrice:account.getYuan()-totalPrice);
             accountRepository.save(account);
-            Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
+            Holding holding = holdingRepository.findByUserIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
             if (holding == null) {
                 log.info("put holding 3-1");
@@ -157,7 +157,7 @@ public class HoldingService {
                     .type(putHoldingDto.getStockType())
                     .stockCode(putHoldingDto.getStockCode())
                     .quantity(putHoldingDto.getQuantity().longValue())
-                    .id(authUser.getId())
+                    .userId(authUser.getId())
                     .totalPrice(putHoldingDto.getNowPrice()* putHoldingDto.getQuantity())
                     .country(putHoldingDto.getCountry())
                     .build());
@@ -176,7 +176,7 @@ public class HoldingService {
         } else if (putHoldingDto.getCountry().equals(3)) {
             account.setDollar(putHoldingDto.getTrType().equals("매도")?account.getDollar()-totalPrice:account.getDollar()+totalPrice);
             accountRepository.save(account);
-            Holding holding = holdingRepository.findByIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
+            Holding holding = holdingRepository.findByUserIdAndStockCode(authUser.getId(), putHoldingDto.getStockCode()).orElse(null);
 
             if (holding == null) {
                 holdingRepository.save(Holding.builder()
@@ -184,7 +184,7 @@ public class HoldingService {
                     .type(putHoldingDto.getStockType())
                     .stockCode(putHoldingDto.getStockCode())
                     .quantity(putHoldingDto.getQuantity().longValue())
-                    .id(authUser.getId())
+                    .userId(authUser.getId())
                     .totalPrice(putHoldingDto.getNowPrice()* putHoldingDto.getQuantity())
                     .country(putHoldingDto.getCountry())
                     .build());
