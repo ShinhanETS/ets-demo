@@ -12,7 +12,7 @@ export default function ArticleContainer() {
     const getArticle = async () => {
       try {
         const response = await getArticles(params.productId);
-        console.log(response);
+        // console.log(response);
         setArticles(response.data);
         setIsLoading(false);
       } catch (error) {

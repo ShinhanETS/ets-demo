@@ -32,7 +32,7 @@ export default function ChartContainer({ nowPrice }) {
     const getChart = async () => {
       try {
         const response = await getCharts(stockCode);
-        console.log(response.data.length);
+        // console.log(response.data);
         setChartData(response.data);
         setIsLoading(false);
       } catch (error) {

@@ -8,7 +8,7 @@ export default function InfoContainer({
   if (currencySymbol === "원") {
     close = close.toLocaleString();
   }
-  console.log(chg);
+
   return (
     <div className="px-[1.5rem] pt-[4.6rem] pb-[0.5rem] bg-white-1 text-black">
       <div className="flex flex-col">

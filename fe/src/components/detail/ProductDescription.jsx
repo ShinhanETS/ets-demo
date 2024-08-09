@@ -13,7 +13,7 @@ export default function ProductDescription() {
     const getDescs = async () => {
       try {
         const response = await getDesc(stockCode);
-        console.log(response.data);
+        // console.log(response.data);
         setDesc(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -23,7 +23,6 @@ export default function ProductDescription() {
 
     getDescs();
   }, []);
-  console.log("desc", desc);
 
   return (
     <div className="h-[calc(100vh_-_264px)] flex flex-col px-[1.5rem] pt-[1rem] gap-4 bg-white-1">

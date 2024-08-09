@@ -45,8 +45,7 @@ export default function BuySellContainer({
     const getSellQuantities = async () => {
       try {
         const response = await getSellQuantity(stockCode);
-        console.log("============");
-        console.log(response.data);
+        // console.log(response.data);
         setSellQuantity(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -149,7 +148,7 @@ export default function BuySellContainer({
     if (amount === 0) {
       setIsError(true);
       setMessage("수량을 입력해주세요.");
-    } else if (amount > sellQuantity.quantity) {
+    } else if (value > sellQuantity.quantity) {
       setIsError(true);
       setMessage("매도 가능 수량을 초과했습니다.");
     } else {
