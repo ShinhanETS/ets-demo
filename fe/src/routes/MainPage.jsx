@@ -28,9 +28,11 @@ export default function MainPage() {
   const [selectedButton, setSelectedButton] = useState(0);
   const [showModal, setShowModal] = useState(true);
   const [productList, setProductList] = useState([]);
+  const [myProductList, setMyProductList] = useState([]);
   const { username } = useContext(UserContext);
   const [isBottom, setIsBottom] = useRecoilState(bottomState);
   const [account, setAccount] = useState({});
+  const [loading, setLoading] = useState(true);
 
   const setProduct = useSetRecoilState(productState); // Recoil state 설정을 위한 함수
   const navigate = useNavigate(); // 페이지 이동을 위한 함수
@@ -58,8 +60,9 @@ export default function MainPage() {
   // 국가나 상품 변경될 때마다 종목들 새로고침
   useEffect(() => {
     const fetchProducts = async () => {
-      if (selectedTab !== 2) {
-        try {
+      setLoading(true); // 로딩 시작
+      try {
+        if (selectedTab !== 2) {
           const response = await fetchProductList(
             selectedTab,
             tabNumberToURL[selectedButton]
@@ -74,32 +77,30 @@ export default function MainPage() {
             });
             setProductList(processedData);
           }
-        } catch (error) {
-          console.error("Error fetching product list:", error);
-        }
-      } else {
-        try {
-          const [account, myProducts] = await Promise.all([
+        } else {
+          const [accountResponse, myProductsResponse] = await Promise.all([
             fetchMyAccount(),
             fetchMyProduct(selectedButton),
           ]);
-          setAccount(account.data);
-          const processedData = myProducts.data.map((product) => {
+          setAccount(accountResponse.data);
+          const processedData = myProductsResponse.data.map((product) => {
             const chgValue = parseFloat(product.chg?.replace("%", ""));
             if (chgValue > 0) {
               product.chg = `+${product.chg}`;
             }
             return product;
           });
-          setProductList(processedData);
-        } catch (error) {
-          console.error("Error fetching account data:", error);
+          setMyProductList(processedData); // MY거래 탭에 대한 상태 업데이트
         }
+      } catch (error) {
+        console.error("Error fetching product list:", error);
+      } finally {
+        setLoading(false); // 로딩 종료
       }
     };
 
     fetchProducts();
-  }, [selectedTab, selectedButton, setProductList]);
+  }, [selectedTab, selectedButton]);
 
   // Product 클릭 시 상세 페이지로 이동
   const handleProductClick = (product) => {
@@ -208,87 +209,108 @@ export default function MainPage() {
           />
         </div>
 
+
         <div className="space-y-2 mt-[3vh] overflow-y-auto h-[55vh] custom-scrollbar">
-          {productList.length === 0 ? (
-            <div className="flex flex-col items-center justify-center mt-10">
-              <img
-                src={selectedTab === 2 ? Please : ComingSoon}
-                alt="No Products"
-                className="w-32 h-32 mb-4"
-              />
-              <p className="text-lg font-semibold text-gray-500">
-                상품이 없어요
-              </p>
-            </div>
-          ) : (
-            productList?.map((product, index) => {
-              const chgValue =
-                selectedTab === 2
-                  ? parseFloat(product?.current_price?.chg?.replace("%", ""))
-                  : parseFloat(product.chg?.replace("%", ""));
-              let chgClass = "";
-
-              if (chgValue === 0.0) {
-                chgClass = "text-black-1";
-              } else if (chgValue > 0) {
-                chgClass = "text-red-1";
-              } else if (chgValue < 0) {
-                chgClass = "text-blue-1";
-              }
-
-              return (
-                <div
-                  key={index}
-                  className="flex justify-between items-center gap-[2vw] p-2 bg-white rounded-lg active:bg-grey-2 transition duration-200 cursor-pointer"
-                  onClick={() => handleProductClick(product)}
-                >
-                  <div className="flex gap-4 items-center">
-                    <img
-                      src={
-                        imageMapping[
-                          selectedTab === 2
-                            ? product?.current_price?.name
-                            : product?.name
-                        ]
-                      }
-                      alt=""
-                      className="rounded-full w-12 h-12"
-                    />
-                    <div className="flex flex-col gap-1 justify-between">
-                      <h3 className="font-semibold">
-                        {selectedTab === 2
-                          ? product?.current_price?.name
-                          : product?.name}
-                      </h3>
-                      <p className="text-[#666666] font-medium text-sm">
-                        {selectedTab === 2
-                          ? product?.current_price?.description
-                          : product?.description}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className={`text-lg font-semibold ${chgClass}`}>
-                      {selectedTab === 2
-                        ? product?.current_price?.chg
-                        : product?.chg}
-                    </p>
-                    <p className="text-[1rem] text-black-1 text-nowrap">
-                      {selectedTab === 2
-                        ? product?.current_price?.currency_symbol === "원"
-                          ? product?.current_price?.close.toLocaleString() +
-                            product?.current_price?.currency_symbol
-                          : product?.current_price?.close +
-                            product?.current_price?.currency_symbol
-                        : product?.currencySymbol === "원"
-                        ? product?.close.toLocaleString() +
-                          product?.currencySymbol
-                        : product?.close + product?.currencySymbol}
-                    </p>
-                  </div>
+          {/* 로딩 중에는 아무것도 표시하지 않음 */}
+          {!loading && (
+            <>
+              {selectedTab !== 2 && productList.length === 0 ? (
+                <div className="flex flex-col items-center justify-center mt-10">
+                  <img
+                    src={ComingSoon}
+                    alt="No Products"
+                    className="w-32 h-32 mb-4"
+                  />
+                  <p className="text-lg font-semibold text-gray-500">
+                    상품이 없어요
+                  </p>
                 </div>
-              );
-            })
+              ) : selectedTab === 2 && myProductList.length === 0 ? (
+                <div className="flex flex-col items-center justify-center mt-10">
+                  <img
+                    src={Please}
+                    alt="No Products"
+                    className="w-32 h-32 mb-4"
+                  />
+                  <p className="text-lg font-semibold text-gray-500">
+                    상품이 없어요
+                  </p>
+                </div>
+              ) : (
+                (selectedTab !== 2 ? productList : myProductList)?.map(
+                  (product, index) => {
+                    const chgValue =
+                      selectedTab === 2
+                        ? parseFloat(
+                            product?.current_price?.chg?.replace("%", "")
+                          )
+                        : parseFloat(product.chg?.replace("%", ""));
+                    let chgClass = "";
+
+                    if (chgValue === 0.0) {
+                      chgClass = "text-black-1";
+                    } else if (chgValue > 0) {
+                      chgClass = "text-red-1";
+                    } else if (chgValue < 0) {
+                      chgClass = "text-blue-1";
+                    }
+
+                    return (
+                      <div
+                        key={index}
+                        className="flex justify-between items-center gap-[2vw] p-2 bg-white rounded-lg active:bg-grey-2 transition duration-200 cursor-pointer"
+                        onClick={() => handleProductClick(product)}
+                      >
+                        <div className="flex gap-4 items-center">
+                          <img
+                            src={
+                              imageMapping[
+                                selectedTab === 2
+                                  ? product?.current_price?.name
+                                  : product?.name
+                              ]
+                            }
+                            alt=""
+                            className="rounded-full w-12 h-12"
+                          />
+                          <div className="flex flex-col gap-1 justify-between">
+                            <h3 className="font-semibold">
+                              {selectedTab === 2
+                                ? product?.current_price?.name
+                                : product?.name}
+                            </h3>
+                            <p className="text-[#666666] font-medium text-sm">
+                              {selectedTab === 2
+                                ? product?.current_price?.description
+                                : product?.description}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className={`text-lg font-semibold ${chgClass}`}>
+                            {selectedTab === 2
+                              ? product?.current_price?.chg
+                              : product?.chg}
+                          </p>
+                          <p className="text-[1rem] text-black-1 text-nowrap">
+                            {selectedTab === 2
+                              ? product?.current_price?.currency_symbol === "원"
+                                ? product?.current_price?.close.toLocaleString() +
+                                  product?.current_price?.currency_symbol
+                                : product?.current_price?.close +
+                                  product?.current_price?.currency_symbol
+                              : product?.currencySymbol === "원"
+                              ? product?.close.toLocaleString() +
+                                product?.currencySymbol
+                              : product?.close + product?.currencySymbol}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  }
+                )
+              )}
+            </>
           )}
         </div>
       </div>
